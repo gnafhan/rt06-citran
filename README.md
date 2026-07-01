@@ -59,6 +59,7 @@ Site jalan tanpa Supabase (fallback ke sample data). Untuk full CMS:
 1. Buat account di [supabase.com](https://supabase.com)
 2. Create new project (region: **Singapore** untuk latency terdekat ke Indonesia)
 3. Dashboard → **SQL Editor** → paste isi `supabase/schema.sql` → Run — bikin tabel + RLS + storage policies
+4. (Opsional) Isi data awal contoh: paste isi `supabase/seed.sql` → Run — 4 artikel + 7 pengurus contoh yang bisa langsung di-edit/hapus dari `/admin`. Skip kalau mau mulai dari kosong.
 4. Dashboard → **Storage** → **New bucket** → nama `foto`, **Public bucket: ON**, file size limit 10 MB
 5. Dashboard → **Authentication** → Users → **Add user** → email + password buat Ketua RT (centang **Auto Confirm**)
 6. Dashboard → **Authentication** → **Providers** → **Email** → matikan **Enable Sign Ups** (biar ga ada yang daftar sembarangan)
