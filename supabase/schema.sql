@@ -73,15 +73,14 @@ create policy "pengurus_authenticated_write"
 
 
 -- ============================================================
--- SEED DATA (opsional, hapus kalau ga butuh)
+-- SEED DATA
+-- Seed lengkap (4 artikel + 7 pengurus) sekarang ada di:
+--   supabase/seed.sql
+-- Jalankan file itu setelah schema ini selesai apply.
 -- ============================================================
-insert into public.pengurus (name, jabatan, periode, order_index) values
-  ('Nama Ketua RT', 'Ketua RT', '2023-2026', 1),
-  ('Nama Sekretaris', 'Sekretaris', '2023-2026', 2),
-  ('Nama Bendahara', 'Bendahara', '2023-2026', 3)
-on conflict do nothing;
 
 -- ==========================================================================
+
 -- Storage bucket & policies (dijalankan otomatis via Management API)
 -- ==========================================================================
 -- Bucket "foto": public read, authenticated write only.
