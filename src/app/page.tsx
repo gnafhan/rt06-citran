@@ -41,7 +41,18 @@ const HIGHLIGHTS = [
 export default function HomePage() {
   return (
     <>
-      <Hero />
+      <Hero
+        // Sample drone footage buat placeholder. Ganti dengan drone shot
+        // Citran/Kotagede beneran nanti (upload ke Supabase Storage bucket
+        // "foto/hero/" atau host di CDN video), lalu update src di sini.
+        videoSources={[
+          {
+            src: "https://videos.pexels.com/video-files/2882090/2882090-uhd_3840_2160_30fps.mp4",
+            type: "video/mp4",
+          },
+        ]}
+        imageSrc="https://images.pexels.com/videos/2882090/free-video-2882090.jpg?auto=compress&cs=tinysrgb&w=2000"
+      />
 
       {/* ================================
           INTRO EDITORIAL

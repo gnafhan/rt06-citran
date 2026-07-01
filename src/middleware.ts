@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // If Supabase not configured yet, just let dev pass but show a notice via query
+  // If Supabase not configured yet, just let dev pass
   if (
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
     !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -20,7 +20,15 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const response = NextResponse.next({ request });
+  // IMPORTANT: Bikin response dulu, lalu supabase client harus bisa nulis cookie
+  // ke BOTH request (untuk step selanjutnya di middleware) DAN response
+  // (untuk dikirim ke browser). Kalau engga, session refresh cookies hilang
+  // dan user ke-redirect balik ke /login setelah login sukses. → infinite loop.
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -34,6 +42,13 @@ export async function middleware(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
+          // Rebuild response so mutated request cookies propagate to
+          // downstream handlers, then re-apply Set-Cookie for the client.
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options),
           );
@@ -42,6 +57,8 @@ export async function middleware(request: NextRequest) {
     },
   );
 
+  // IMPORTANT: Do not run code between createServerClient and getUser.
+  // Any delay/logic here can break session refresh timing.
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -57,5 +74,8 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: [
+    // Match all admin routes except static assets
+    "/admin/:path*",
+  ],
 };

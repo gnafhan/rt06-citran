@@ -12,6 +12,7 @@
   --paper-deep: #E8DCC0;
 
   /* Sogan family — coklat batik klasik */
+  --sogan-950: #100D0A;
   --sogan-900: #1F1A15;
   --sogan-800: #3D2F20;
   --sogan-700: #5A4530;
@@ -53,6 +54,7 @@
   --color-paper-soft: var(--paper-soft);
   --color-paper-deep: var(--paper-deep);
   --color-sogan: var(--sogan-600);
+  --color-sogan-950: var(--sogan-950);
   --color-sogan-900: var(--sogan-900);
   --color-sogan-800: var(--sogan-800);
   --color-sogan-700: var(--sogan-700);

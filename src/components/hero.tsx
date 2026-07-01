@@ -1,13 +1,32 @@
 "use client";
 
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { ArrowDown } from "lucide-react";
 import { KawungPattern } from "./kawung";
 
-export function Hero() {
+interface HeroProps {
+  /**
+   * Video sources buat drone aerial. Support multiple format (webm > mp4).
+   * Kalau kosong, fallback ke `imageSrc`.
+   */
+  videoSources?: { src: string; type: string }[];
+  /**
+   * Poster image (tampil sebelum video load, atau kalau video gagal / user
+   * pake `prefers-reduced-motion`). Wajib diisi.
+   */
+  imageSrc?: string;
+}
+
+const DEFAULT_IMAGE = "https://picsum.photos/seed/kotagede-aerial-v3/2000/1400";
+
+export function Hero({
+  videoSources,
+  imageSrc = DEFAULT_IMAGE,
+}: HeroProps = {}) {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+  const [videoFailed, setVideoFailed] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -18,24 +37,41 @@ export function Hero() {
   const scale = useTransform(scrollYProgress, [0, 1], [1, reduce ? 1 : 1.15]);
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
+  // Video only shown when: sources provided, not failed, and reduced-motion off
+  const showVideo = videoSources && videoSources.length > 0 && !videoFailed && !reduce;
+
   return (
     <section
       ref={ref}
-      className="relative h-[100svh] min-h-[720px] w-full overflow-hidden"
+      className="relative h-[100svh] min-h-[720px] w-full overflow-hidden bg-sogan-950"
     >
-      {/* Aerial image layer (parallax) */}
-      <motion.div
-        style={{ y, scale }}
-        className="absolute inset-0"
-      >
-        {/* Placeholder aerial — nanti diganti drone shot */}
-        <div
-          className="h-full w-full bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "linear-gradient(180deg, rgba(31,26,21,0.15) 0%, rgba(31,26,21,0.55) 100%), url('https://picsum.photos/seed/kotagede-aerial-v3/2000/1400')",
-          }}
-        />
+      {/* Aerial media layer (parallax) */}
+      <motion.div style={{ y, scale }} className="absolute inset-0">
+        {showVideo ? (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster={imageSrc}
+            onError={() => setVideoFailed(true)}
+            onStalled={() => setVideoFailed(true)}
+            className="h-full w-full object-cover"
+            aria-hidden="true"
+          >
+            {videoSources!.map((s) => (
+              <source key={s.src} src={s.src} type={s.type} />
+            ))}
+          </video>
+        ) : (
+          <div
+            className="h-full w-full bg-cover bg-center"
+            style={{ backgroundImage: `url('${imageSrc}')` }}
+          />
+        )}
+        {/* Darkening scrim on top biar text kebaca */}
+        <div className="absolute inset-0 bg-gradient-to-b from-sogan-950/25 via-sogan-950/30 to-sogan-950/70" />
       </motion.div>
 
       {/* Kawung ornament layers */}

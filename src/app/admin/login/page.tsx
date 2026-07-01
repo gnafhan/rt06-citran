@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { KawungPattern, KawungMark } from "@/components/kawung";
 import { Loader2, ArrowLeft } from "lucide-react";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") ?? "/admin";
 
@@ -23,19 +22,33 @@ function LoginForm() {
     setLoading(true);
 
     const supabase = createClient();
-    const { error: signInError } = await supabase.auth.signInWithPassword({
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (signInError) {
-      setError(signInError.message);
+      let msg = signInError.message;
+      if (msg.toLowerCase().includes("invalid login credentials")) {
+        msg = "Email atau kata sandi salah. Coba lagi.";
+      } else if (msg.toLowerCase().includes("email not confirmed")) {
+        msg = "Email belum dikonfirmasi. Hubungi Ketua RT.";
+      }
+      setError(msg);
       setLoading(false);
       return;
     }
 
-    router.push(redirect);
-    router.refresh();
+    if (!data.session) {
+      setError("Login gagal tersimpan. Coba refresh halaman lalu login ulang.");
+      setLoading(false);
+      return;
+    }
+
+    // Full page reload biar cookie session yang baru di-set browser client
+    // pasti ikut ke request server (middleware + admin layout).
+    // router.push kadang race sama cookie sync di Next 15+ -> infinite redirect.
+    window.location.assign(redirect);
   }
 
   return (
