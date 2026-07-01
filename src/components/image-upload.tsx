@@ -1,190 +1,332 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { UploadCloud, X, Loader2, Link as LinkIcon } from "lucide-react";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { Upload, X, Loader2, ImageIcon, AlertCircle, CheckCircle2 } from "lucide-react";
+import { createBrowserClient } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { cn } from "@/lib/utils";
-
-declare global {
-  interface Window {
-    cloudinary?: {
-      createUploadWidget: (
-        options: Record<string, unknown>,
-        callback: (error: Error | null, result: { event?: string; info?: { secure_url?: string } }) => void,
-      ) => { open: () => void };
-    };
-  }
-}
 
 interface Props {
   name: string;
-  value: string;
-  onChange: (url: string) => void;
+  value?: string;
+  onChange?: (url: string) => void;
   label?: string;
   aspectRatio?: string;
+  bucket?: string;
+  folder?: string;
 }
 
+const MAX_MB = 10;
+const ACCEPTED = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+const ACCEPT_ATTR = "image/jpeg,image/png,image/webp,image/gif,image/jpg";
+
 /**
- * ImageUpload — Cloudinary unsigned upload widget dengan fallback URL input.
+ * ImageUpload — file upload native buat admin RT.
  *
- * Kalau env NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME + PRESET terisi, tampilin widget
- * drag-and-drop. Kalau engga, fallback ke plain URL input.
+ * Design goal: dipake bapak-bapak pengurus RT, jadi:
+ * - Tombol GEDE, ikon jelas
+ * - Kalimat instruksi ramah, bukan jargon teknis
+ * - Drag & drop DAN klik-pilih, dua-duanya jalan
+ * - Preview langsung setelah upload
+ * - Progress bar biar tau lagi loading
+ * - Error message plain Indonesian
+ * - Mobile: `capture` attribute biar bisa langsung buka kamera HP
  */
 export function ImageUpload({
   name,
-  value,
+  value = "",
   onChange,
   label = "Foto",
   aspectRatio = "16/10",
+  bucket = "foto",
+  folder = "uploads",
 }: Props) {
-  const [ready, setReady] = useState(false);
+  const [url, setUrl] = useState(value);
   const [uploading, setUploading] = useState(false);
-  const [showUrlInput, setShowUrlInput] = useState(false);
-  const scriptLoadedRef = useRef(false);
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
+  const [justUploaded, setJustUploaded] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-  const cloudinaryConfigured = !!(cloudName && uploadPreset);
+  // Lazy init: bikin client hanya kalau env ada, di client-side.
+  // Kalau env kosong, `isConfigured` = false dan komponen fallback ke
+  // mode terbatas (upload disabled, no crash).
+  const supabase = useMemo<SupabaseClient | null>(() => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !key) return null;
+    return createBrowserClient(url, key);
+  }, []);
 
-  useEffect(() => {
-    if (!cloudinaryConfigured || scriptLoadedRef.current) return;
-    if (window.cloudinary) {
-      setReady(true);
-      return;
-    }
+  const isConfigured = supabase !== null;
 
-    scriptLoadedRef.current = true;
-    const script = document.createElement("script");
-    script.src = "https://upload-widget.cloudinary.com/global/all.js";
-    script.async = true;
-    script.onload = () => setReady(true);
-    document.body.appendChild(script);
-  }, [cloudinaryConfigured]);
+  const uploadFile = useCallback(
+    async (file: File) => {
+      setError(null);
+      setJustUploaded(false);
 
-  function openWidget() {
-    if (!ready || !window.cloudinary) return;
+      if (!supabase) {
+        setError(
+          "Supabase belum di-setup. Hubungi pengurus IT untuk mengaktifkan fitur upload."
+        );
+        return;
+      }
 
-    const widget = window.cloudinary.createUploadWidget(
-      {
-        cloudName,
-        uploadPreset,
-        sources: ["local", "camera", "url"],
-        multiple: false,
-        maxFileSize: 10_000_000, // 10MB
-        clientAllowedFormats: ["png", "jpg", "jpeg", "webp"],
-        folder: "rt06-citran",
-        showAdvancedOptions: false,
-        cropping: false,
-        styles: {
-          palette: {
-            window: "#F4EBD9",
-            windowBorder: "#6B4423",
-            tabIcon: "#6B4423",
-            menuIcons: "#6B4423",
-            textDark: "#1F1A15",
-            textLight: "#F4EBD9",
-            link: "#6B4423",
-            action: "#C9A55B",
-            inactiveTabIcon: "#8A7F76",
-            error: "#A94438",
-            inProgress: "#C9A55B",
-            complete: "#5A7A5A",
-            sourceBg: "#FBF5E8",
-          },
-        },
-      },
-      (error, result) => {
-        if (error) {
-          console.error("Cloudinary upload error:", error);
-          setUploading(false);
-          return;
+      // Validate type
+      if (!ACCEPTED.includes(file.type)) {
+        setError(
+          "File yang dipilih bukan foto. Silakan pilih file JPG, PNG, WEBP, atau GIF."
+        );
+        return;
+      }
+
+      // Validate size
+      const sizeMB = file.size / 1024 / 1024;
+      if (sizeMB > MAX_MB) {
+        setError(
+          `Ukuran foto terlalu besar (${sizeMB.toFixed(
+            1
+          )} MB). Maksimal ${MAX_MB} MB. Coba kompres dulu atau pilih foto lain.`
+        );
+        return;
+      }
+
+      setUploading(true);
+      setProgress(10);
+
+      try {
+        // Fake progress (Supabase JS ga expose upload progress via fetch)
+        const progressTimer = setInterval(() => {
+          setProgress((p) => (p < 85 ? p + Math.random() * 15 : p));
+        }, 300);
+
+        // Generate safe filename
+        const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+        const safeBase = file.name
+          .replace(/\.[^.]+$/, "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "")
+          .slice(0, 40);
+        const timestamp = Date.now();
+        const path = `${folder}/${timestamp}-${safeBase || "foto"}.${ext}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from(bucket)
+          .upload(path, file, {
+            cacheControl: "31536000",
+            upsert: false,
+            contentType: file.type,
+          });
+
+        clearInterval(progressTimer);
+
+        if (uploadError) {
+          throw uploadError;
         }
-        if (result.event === "upload-added") setUploading(true);
-        if (result.event === "success" && result.info?.secure_url) {
-          onChange(result.info.secure_url);
-          setUploading(false);
-        }
-        if (result.event === "close") setUploading(false);
-      },
-    );
 
-    widget.open();
-  }
+        // Get public URL
+        const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+
+        setProgress(100);
+        setUrl(data.publicUrl);
+        onChange?.(data.publicUrl);
+        setJustUploaded(true);
+        setTimeout(() => setJustUploaded(false), 3000);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        // Translate common errors
+        if (msg.includes("row-level security") || msg.includes("policy")) {
+          setError("Silakan login ulang, sesi Anda mungkin sudah habis.");
+        } else if (msg.includes("Bucket not found")) {
+          setError("Bucket foto belum dibuat. Hubungi pengurus IT.");
+        } else if (msg.includes("Payload too large")) {
+          setError(`Ukuran foto melebihi batas ${MAX_MB} MB.`);
+        } else {
+          setError(`Upload gagal: ${msg}. Coba lagi ya.`);
+        }
+        setProgress(0);
+      } finally {
+        setUploading(false);
+        setTimeout(() => setProgress(0), 1200);
+      }
+    },
+    [bucket, folder, onChange, supabase]
+  );
+
+  const onFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) uploadFile(file);
+    e.target.value = "";
+  };
+
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) uploadFile(file);
+  };
+
+  const clearImage = () => {
+    setUrl("");
+    onChange?.("");
+    setError(null);
+    setJustUploaded(false);
+  };
 
   return (
-    <div>
-      <label className="eyebrow text-[10px] block mb-2">{label}</label>
+    <div className="space-y-3">
+      <label className="eyebrow text-[10px] block">{label}</label>
 
-      {/* Preview */}
-      {value && (
-        <div
-          className="relative rounded-lg overflow-hidden border border-sogan/15 mb-3 bg-paper-deep group"
-          style={{ aspectRatio }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={value}
-            alt="Preview"
-            className="absolute inset-0 h-full w-full object-cover"
+      {/* Hidden input yang di-submit ke server action */}
+      <input type="hidden" name={name} value={url} />
+
+      {url ? (
+        // === PREVIEW MODE ===
+        <div className="relative group">
+          <div
+            className="w-full rounded-lg overflow-hidden bg-paper-deep border border-sogan/15 bg-cover bg-center"
+            style={{ aspectRatio, backgroundImage: `url('${url}')` }}
           />
-          <button
-            type="button"
-            onClick={() => onChange("")}
-            className="absolute top-2 right-2 bg-sogan-900/85 text-paper p-2 rounded-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-bata"
-            aria-label="Hapus foto"
-          >
-            <X size={14} strokeWidth={2} />
-          </button>
+          <div className="flex items-center justify-between gap-3 mt-3">
+            <div className="flex items-center gap-2 text-sm text-daun min-w-0 flex-1">
+              {justUploaded ? (
+                <>
+                  <CheckCircle2 size={16} strokeWidth={1.8} className="shrink-0" />
+                  <span>Foto berhasil di-upload!</span>
+                </>
+              ) : (
+                <>
+                  <ImageIcon size={16} strokeWidth={1.5} className="shrink-0 text-sogan-500" />
+                  <span className="text-ink-mute truncate">
+                    Foto sudah terpasang
+                  </span>
+                </>
+              )}
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => inputRef.current?.click()}
+                className="text-sm text-sogan hover:text-sogan-900 px-3 py-2 rounded-md hover:bg-paper transition-colors"
+              >
+                Ganti
+              </button>
+              <button
+                type="button"
+                onClick={clearImage}
+                className="inline-flex items-center gap-1.5 text-sm text-bata hover:bg-bata/10 px-3 py-2 rounded-md transition-colors"
+              >
+                <X size={14} strokeWidth={1.8} />
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        // === UPLOAD ZONE ===
+        <div
+          onClick={() => !uploading && inputRef.current?.click()}
+          onDragOver={(e) => {
+            e.preventDefault();
+            if (!uploading) setDragOver(true);
+          }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={onDrop}
+          className={cn(
+            "relative w-full rounded-lg border-2 border-dashed transition-all cursor-pointer group",
+            "flex flex-col items-center justify-center text-center p-8 md:p-12",
+            uploading && "cursor-wait pointer-events-none",
+            dragOver
+              ? "border-sogan bg-paper-soft"
+              : "border-sogan/25 bg-paper-soft/40 hover:border-sogan/50 hover:bg-paper-soft"
+          )}
+          style={{ aspectRatio }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if ((e.key === "Enter" || e.key === " ") && !uploading) {
+              e.preventDefault();
+              inputRef.current?.click();
+            }
+          }}
+        >
+          {uploading ? (
+            <>
+              <Loader2
+                size={48}
+                strokeWidth={1.5}
+                className="text-sogan animate-spin mb-4"
+              />
+              <p className="font-display text-xl text-sogan-900 mb-2">
+                Sedang mengunggah…
+              </p>
+              <p className="text-sm text-ink-mute mb-4">
+                Mohon ditunggu sebentar
+              </p>
+              <div className="w-full max-w-xs h-2 bg-paper-deep rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-sogan transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <p className="mt-2 text-xs font-mono text-sogan-500">
+                {Math.round(progress)}%
+              </p>
+            </>
+          ) : (
+            <>
+              <div
+                className={cn(
+                  "w-16 h-16 rounded-full bg-sogan/10 flex items-center justify-center mb-4 transition-colors",
+                  dragOver && "bg-sogan/20"
+                )}
+              >
+                <Upload
+                  size={28}
+                  strokeWidth={1.5}
+                  className="text-sogan-800"
+                />
+              </div>
+              <p className="font-display text-xl md:text-2xl text-sogan-900 mb-2">
+                {dragOver ? "Lepaskan di sini" : "Pilih foto atau seret ke sini"}
+              </p>
+              <p className="text-sm text-ink-soft max-w-sm">
+                Klik area ini untuk memilih foto dari komputer atau HP.
+                <br className="hidden sm:block" />
+                Format JPG, PNG, atau WEBP. Maksimal {MAX_MB} MB.
+              </p>
+              <div className="mt-4 inline-flex items-center gap-2 bg-sogan-900 text-paper px-5 py-3 rounded-md group-hover:bg-sogan-800 transition-colors text-sm">
+                <Upload size={16} strokeWidth={1.6} />
+                Pilih foto
+              </div>
+            </>
+          )}
         </div>
       )}
 
-      <input type="hidden" name={name} value={value} />
+      <input
+        ref={inputRef}
+        type="file"
+        accept={ACCEPT_ATTR}
+        onChange={onFileSelect}
+        className="hidden"
+        disabled={uploading}
+      />
 
-      {/* Upload actions */}
-      <div className="flex flex-wrap gap-2">
-        {cloudinaryConfigured ? (
-          <button
-            type="button"
-            onClick={openWidget}
-            disabled={!ready || uploading}
-            className={cn(
-              "inline-flex items-center gap-2 border border-sogan/15 bg-paper text-sogan-900 px-4 py-2.5 rounded-md hover:bg-paper-soft hover:border-sogan/30 transition-all text-sm disabled:opacity-50",
-            )}
-          >
-            {uploading ? (
-              <Loader2 size={14} className="animate-spin" />
-            ) : (
-              <UploadCloud size={14} strokeWidth={1.5} />
-            )}
-            {value ? "Ganti foto" : "Unggah foto"}
-          </button>
-        ) : null}
-
-        <button
-          type="button"
-          onClick={() => setShowUrlInput((v) => !v)}
-          className="inline-flex items-center gap-2 text-sm text-ink-mute hover:text-sogan-900 px-3 py-2.5 transition-colors"
-        >
-          <LinkIcon size={13} strokeWidth={1.5} />
-          {showUrlInput ? "Sembunyikan URL" : "Atau tempel URL"}
-        </button>
-      </div>
-
-      {(!cloudinaryConfigured || showUrlInput) && (
-        <div className="mt-3">
-          <input
-            type="url"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            className="w-full px-4 py-2.5 bg-paper border border-sogan/15 rounded-md focus:outline-none focus:border-sogan focus:ring-2 focus:ring-sogan/10 transition-all font-mono text-xs"
-            placeholder="https://res.cloudinary.com/..."
-          />
-          {!cloudinaryConfigured && (
-            <p className="mt-2 text-xs text-ink-mute">
-              Cloudinary belum diaktifkan. Set <code className="font-mono text-[10px] bg-paper-soft px-1.5 py-0.5 rounded">NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME</code>
-              {" "}dan preset di <code className="font-mono text-[10px] bg-paper-soft px-1.5 py-0.5 rounded">.env.local</code> untuk mengaktifkan drag-and-drop.
-            </p>
-          )}
+      {error && (
+        <div className="flex items-start gap-2 p-3 bg-bata/10 border border-bata/20 rounded-md text-sm text-bata">
+          <AlertCircle size={16} strokeWidth={1.8} className="shrink-0 mt-0.5" />
+          <span>{error}</span>
         </div>
+      )}
+
+      {!isConfigured && (
+        <p className="text-xs text-ink-mute italic">
+          Supabase belum di-setup. Set NEXT_PUBLIC_SUPABASE_URL &amp;
+          NEXT_PUBLIC_SUPABASE_ANON_KEY di env.
+        </p>
       )}
     </div>
   );

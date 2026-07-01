@@ -80,3 +80,27 @@ insert into public.pengurus (name, jabatan, periode, order_index) values
   ('Nama Sekretaris', 'Sekretaris', '2023-2026', 2),
   ('Nama Bendahara', 'Bendahara', '2023-2026', 3)
 on conflict do nothing;
+
+-- ==========================================================================
+-- Storage bucket & policies (dijalankan otomatis via Management API)
+-- ==========================================================================
+-- Bucket "foto": public read, authenticated write only.
+-- Max file size: 10 MB. Allowed types: jpeg, png, webp, gif.
+-- Buat manual via Dashboard: Storage > New bucket > "foto" > Public: ON
+-- Atau lewat CLI/API (lihat catatan setup di README).
+
+-- Storage RLS policies untuk bucket "foto"
+do $$ begin
+  if not exists (select 1 from pg_policies where schemaname='storage' and policyname='foto_public_read') then
+    create policy foto_public_read on storage.objects for select using (bucket_id = 'foto');
+  end if;
+  if not exists (select 1 from pg_policies where schemaname='storage' and policyname='foto_auth_insert') then
+    create policy foto_auth_insert on storage.objects for insert to authenticated with check (bucket_id = 'foto');
+  end if;
+  if not exists (select 1 from pg_policies where schemaname='storage' and policyname='foto_auth_update') then
+    create policy foto_auth_update on storage.objects for update to authenticated using (bucket_id = 'foto');
+  end if;
+  if not exists (select 1 from pg_policies where schemaname='storage' and policyname='foto_auth_delete') then
+    create policy foto_auth_delete on storage.objects for delete to authenticated using (bucket_id = 'foto');
+  end if;
+end $$;

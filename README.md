@@ -3,7 +3,7 @@
 > **Nyawiji ing Warisan Mataram.**
 > Landing page + light CMS untuk Rukun Tetangga 06 Citran, Bodon, Jagalan, Banguntapan, Bantul. Kawasan Cagar Budaya Kotagede.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/gnafhan/rt06-citran&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET&envDescription=Supabase%20%2B%20Cloudinary%20credentials.%20See%20README%20for%20setup%20steps.&envLink=https://github.com/gnafhan/rt06-citran%23setup-lokal&project-name=rt06-citran&repository-name=rt06-citran&demo-title=RT%2006%20Citran&demo-description=Editorial-cultural%20landing%20page%20for%20a%20heritage%20neighborhood%20in%20Kotagede,%20Yogyakarta.)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/gnafhan/rt06-citran&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY&envDescription=Supabase%20credentials.%20See%20README%20for%20setup%20steps.&envLink=https://github.com/gnafhan/rt06-citran%23setup-lokal&project-name=rt06-citran&repository-name=rt06-citran&demo-title=RT%2006%20Citran&demo-description=Editorial-cultural%20landing%20page%20for%20a%20heritage%20neighborhood%20in%20Kotagede,%20Yogyakarta.)
 
 **Vibe:** Editorial-cultural. Kertas krem, sogan (coklat batik), kunyit accent, ornamen kawung. Bukan corporate, bukan brutalist.
 
@@ -12,8 +12,7 @@
 - **Framework:** Next.js 16 App Router + TypeScript
 - **Styling:** Tailwind CSS v4
 - **Animation:** Motion (framer-motion successor)
-- **CMS + Auth + DB:** Supabase (free tier)
-- **Image storage:** Cloudinary (free 25 credits/bulan)
+- **CMS + Auth + DB + Storage:** Supabase (free tier, semua di satu vendor)
 - **Deploy:** Vercel Hobby (free)
 - **Fonts:** Fraunces (display serif), Plus Jakarta Sans (body), JetBrains Mono, Noto Sans Javanese
 
@@ -59,24 +58,15 @@ Site jalan tanpa Supabase (fallback ke sample data). Untuk full CMS:
 
 1. Buat account di [supabase.com](https://supabase.com)
 2. Create new project (region: **Singapore** untuk latency terdekat ke Indonesia)
-3. Dashboard → **SQL Editor** → paste isi `supabase/schema.sql` → Run
-4. Dashboard → **Authentication** → Users → **Add user** → email + password buat Ketua RT
-5. Dashboard → **Settings** → **API** → copy `URL` dan `anon public key` ke `.env.local`
+3. Dashboard → **SQL Editor** → paste isi `supabase/schema.sql` → Run — bikin tabel + RLS + storage policies
+4. Dashboard → **Storage** → **New bucket** → nama `foto`, **Public bucket: ON**, file size limit 10 MB
+5. Dashboard → **Authentication** → Users → **Add user** → email + password buat Ketua RT (centang **Auto Confirm**)
+6. Dashboard → **Authentication** → **Providers** → **Email** → matikan **Enable Sign Ups** (biar ga ada yang daftar sembarangan)
+7. Dashboard → **Settings** → **API** → copy `URL` dan `anon public key` ke `.env.local`
 
-### 2. Setup Cloudinary (~3 menit, free)
+Upload foto sekarang **built-in** di admin panel — bapak-bapak tinggal klik area upload atau drag & drop foto langsung. Ga perlu copy-paste URL lagi.
 
-1. Buat account di [cloudinary.com](https://cloudinary.com)
-2. Dashboard → **Settings** → **Upload** → **Add upload preset** → mode: **Unsigned**, nama: `rt06_citran_unsigned`
-3. Dashboard → **Account Details** → copy `Cloud Name` ke `.env.local`
-
-Upload foto:
-- Buka Cloudinary Dashboard → **Media Library** → upload
-- Copy URL yang jadi (`https://res.cloudinary.com/...`)
-- Tempel di field "URL foto cover" saat bikin/edit liputan
-
-Atau setup [Cloudinary Media Library widget](https://cloudinary.com/documentation/media_library_widget) langsung di admin form (bisa ditambahkan nanti).
-
-### 3. Login Admin
+### 2. Login Admin
 
 - Buka `http://localhost:3000/admin/login`
 - Login dengan email/password yang tadi dibuat di Supabase
@@ -133,8 +123,8 @@ Yang **dijaga**:
 
 ## Roadmap
 
-- [ ] Cloudinary upload widget di admin form (drag & drop)
-- [ ] CRUD full untuk `/admin/pengurus`
+- [x] File upload native via Supabase Storage (drag & drop, mobile camera support)
+- [x] CRUD full untuk `/admin/pengurus`
 - [ ] RSS feed di `/liputan/rss.xml`
 - [ ] Sitemap otomatis
 - [ ] Search sederhana di halaman liputan
