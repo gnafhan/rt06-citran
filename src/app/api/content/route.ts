@@ -52,11 +52,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // Revalidate path sesuai prefix key
-  if (key.startsWith("home.")) revalidatePath("/");
-  else if (key.startsWith("tentang.")) revalidatePath("/tentang");
-  else if (key.startsWith("liputan.")) revalidatePath("/liputan");
-  else if (key.startsWith("pengurus.")) revalidatePath("/pengurus");
+  // Revalidate path sesuai prefix key. nav.* / footer.* / hero.* muncul di
+  // semua halaman (via root layout), jadi harus revalidate layout root.
+  if (
+    key.startsWith("nav.") ||
+    key.startsWith("footer.") ||
+    key.startsWith("hero.")
+  ) {
+    revalidatePath("/", "layout");
+  } else if (key.startsWith("home.")) {
+    revalidatePath("/");
+  } else if (key.startsWith("tentang.")) {
+    revalidatePath("/tentang");
+  } else if (key.startsWith("liputan.")) {
+    revalidatePath("/liputan");
+  } else if (key.startsWith("pengurus.")) {
+    revalidatePath("/pengurus");
+  }
 
   return NextResponse.json({ ok: true });
 }

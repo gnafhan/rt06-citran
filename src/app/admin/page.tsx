@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileText, Users, ArrowUpRight } from "lucide-react";
+import { FileText, Users, ArrowUpRight, Image as ImageIcon, Pencil } from "lucide-react";
 import { getArticlesAdmin, getPengurusAdmin } from "@/lib/queries";
 
 export const revalidate = 0;
@@ -55,6 +55,43 @@ export default async function AdminDashboardPage() {
               size={14}
               className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
             />
+          </div>
+        </Link>
+      </div>
+
+      {/* Edit inline / tampilan */}
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <Link
+          href="/"
+          className="group bg-paper-soft border border-sogan/10 rounded-lg p-6 hover:bg-paper hover:border-kunyit-500/40 transition-all"
+        >
+          <Pencil size={18} strokeWidth={1.4} className="text-kunyit-600" />
+          <p className="eyebrow text-[10px] mt-4">Edit langsung</p>
+          <p className="mt-2 font-display text-2xl text-sogan-900 leading-tight">
+            Ubah teks di halaman publik
+          </p>
+          <p className="mt-3 text-sm text-ink-soft">
+            Buka beranda, klik &quot;Edit halaman&quot; di kanan bawah, lalu klik teks apapun untuk ubah.
+          </p>
+          <div className="mt-4 inline-flex items-center gap-2 text-sm text-sogan">
+            Ke beranda <ArrowUpRight size={14} />
+          </div>
+        </Link>
+
+        <Link
+          href="/admin/tampilan"
+          className="group bg-paper-soft border border-sogan/10 rounded-lg p-6 hover:bg-paper hover:border-kunyit-500/40 transition-all"
+        >
+          <ImageIcon size={18} strokeWidth={1.4} className="text-kunyit-600" />
+          <p className="eyebrow text-[10px] mt-4">Tampilan</p>
+          <p className="mt-2 font-display text-2xl text-sogan-900 leading-tight">
+            Ganti video / foto hero
+          </p>
+          <p className="mt-3 text-sm text-ink-soft">
+            Upload video drone atau foto besar buat bagian atas beranda.
+          </p>
+          <div className="mt-4 inline-flex items-center gap-2 text-sm text-sogan">
+            Buka pengaturan <ArrowUpRight size={14} />
           </div>
         </Link>
       </div>

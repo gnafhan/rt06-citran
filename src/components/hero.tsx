@@ -1,44 +1,73 @@
 "use client";
 
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import { ArrowDown } from "lucide-react";
 import { KawungPattern } from "./kawung";
+import { Editable } from "./editable/editable";
+import { useEditMode } from "./editable/edit-mode-provider";
 
 interface HeroProps {
-  /**
-   * Video sources buat drone aerial. Support multiple format (webm > mp4).
-   * Kalau kosong, fallback ke `imageSrc`.
-   */
   videoSources?: { src: string; type: string }[];
-  /**
-   * Poster image (tampil sebelum video load, atau kalau video gagal / user
-   * pake `prefers-reduced-motion`). Wajib diisi.
-   */
   imageSrc?: string;
+  /**
+   * Content dari site_content \u2014 di-pass dari server component parent.
+   * Kalau ga ada, fallback ke default string.
+   */
+  content?: {
+    eyebrow1?: string;
+    eyebrow2?: string;
+    coord?: string;
+    headline?: string;
+    subheadline?: string;
+  };
 }
 
 const DEFAULT_IMAGE = "https://picsum.photos/seed/kotagede-aerial-v3/2000/1400";
 
+const DEFAULTS = {
+  eyebrow1: "Rukun Tetangga 06",
+  eyebrow2: "Bodon \u00b7 Jagalan \u00b7 Kotagede",
+  coord: "\u22127.829\u00b0S 110.395\u00b0E",
+  headline: "Nyawiji ing Warisan Mataram.",
+  subheadline:
+    "Kampung Citran bertengger di sudut Kotagede\u2014kawasan cagar budaya yang menyimpan denyut Mataram Islam. Gapura tua, gang beringkas, dan warga yang guyub. Ini rumah kami.",
+};
+
 export function Hero({
   videoSources,
   imageSrc = DEFAULT_IMAGE,
+  content = {},
 }: HeroProps = {}) {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const [videoFailed, setVideoFailed] = useState(false);
+  const { editMode } = useEditMode();
 
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "30%"]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, reduce ? 1 : 1.15]);
-  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  // Kalau lagi edit mode, disable parallax + fade-out biar ga ganggu klik
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", editMode || reduce ? "0%" : "30%"]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, editMode || reduce ? 1 : 1.15]);
+  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, editMode ? 1 : 0]);
 
-  // Video only shown when: sources provided, not failed, and reduced-motion off
   const showVideo = videoSources && videoSources.length > 0 && !videoFailed && !reduce;
+
+  const headline = content.headline ?? DEFAULTS.headline;
+
+  // Split headline jadi kata-kata untuk animation. Kata ke-3 (index 2)
+  // di-emphasize italic + kunyit \u2014 tapi kalau headline pendek, cari kata
+  // yang ada 'warisan/mataram/citran' atau default index 2.
+  const words = useMemo(() => headline.split(/\s+/), [headline]);
+  const emphasizeIndex = useMemo(() => {
+    const keywordIdx = words.findIndex((w) =>
+      /warisan|mataram|citran|kotagede/i.test(w),
+    );
+    return keywordIdx >= 0 ? keywordIdx : Math.min(2, words.length - 1);
+  }, [words]);
 
   return (
     <section
@@ -70,11 +99,10 @@ export function Hero({
             style={{ backgroundImage: `url('${imageSrc}')` }}
           />
         )}
-        {/* Darkening scrim on top biar text kebaca */}
+        {/* Darkening scrim */}
         <div className="absolute inset-0 bg-gradient-to-b from-sogan-950/25 via-sogan-950/30 to-sogan-950/70" />
       </motion.div>
 
-      {/* Kawung ornament layers */}
       <KawungPattern
         className="absolute -top-32 -left-32 h-[500px] w-[500px] text-kunyit-400 animate-slow-rotate mix-blend-soft-light"
         opacity={0.4}
@@ -90,69 +118,99 @@ export function Hero({
         className="relative z-10 h-full flex flex-col justify-end pb-24 md:pb-32"
       >
         <div className="container-editorial">
-          {/* Meta line — coordinates + jawa */}
+          {/* Meta line */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-6 md:mb-10"
           >
-            <span className="eyebrow text-paper-soft/80">
-              Rukun Tetangga 06
-            </span>
+            <Editable
+              contentKey="hero.eyebrow1"
+              defaultValue={content.eyebrow1 ?? DEFAULTS.eyebrow1}
+              as="span"
+              className="eyebrow text-paper-soft/80"
+            />
             <span className="hidden md:inline text-paper-soft/40">·</span>
-            <span className="eyebrow text-paper-soft/60">
-              Bodon · Jagalan · Kotagede
-            </span>
+            <Editable
+              contentKey="hero.eyebrow2"
+              defaultValue={content.eyebrow2 ?? DEFAULTS.eyebrow2}
+              as="span"
+              className="eyebrow text-paper-soft/60"
+            />
             <span className="hidden md:inline text-paper-soft/40">·</span>
-            <span className="font-mono text-xs text-paper-soft/50">
-              −7.829°S 110.395°E
-            </span>
+            <Editable
+              contentKey="hero.coord"
+              defaultValue={content.coord ?? DEFAULTS.coord}
+              as="span"
+              className="font-mono text-xs text-paper-soft/50"
+            />
           </motion.div>
 
-          {/* Headline */}
+          {/* Headline \u2014 editable jadi 1 field, animation split per-kata */}
           <div className="max-w-5xl">
-            <motion.h1
-              className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[6.5rem] text-paper leading-[0.95] tracking-tight"
-              initial="hidden"
-              animate="visible"
-              variants={{
-                visible: {
-                  transition: { staggerChildren: 0.12, delayChildren: 0.6 },
-                },
-              }}
-            >
-              {["Nyawiji", "ing", "Warisan", "Mataram."].map((word, i) => (
-                <motion.span
-                  key={i}
-                  className="inline-block mr-4 md:mr-6"
-                  variants={{
-                    hidden: { y: "110%", opacity: 0 },
-                    visible: {
-                      y: 0,
-                      opacity: 1,
-                      transition: {
-                        duration: 1.1,
-                        ease: [0.22, 1, 0.36, 1],
+            {editMode ? (
+              // Edit mode: render sebagai satu <Editable> multiline biar gampang di-edit,
+              // ga pake per-word animation supaya ga bingung admin
+              <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[6.5rem] text-paper leading-[0.95] tracking-tight">
+                <Editable
+                  contentKey="hero.headline"
+                  defaultValue={headline}
+                  multiline
+                  as="span"
+                  className="text-paper"
+                />
+              </h1>
+            ) : (
+              <motion.h1
+                className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[6.5rem] text-paper leading-[0.95] tracking-tight"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  visible: {
+                    transition: { staggerChildren: 0.12, delayChildren: 0.6 },
+                  },
+                }}
+              >
+                {words.map((word, i) => (
+                  <motion.span
+                    key={`${word}-${i}`}
+                    className="inline-block mr-4 md:mr-6"
+                    variants={{
+                      hidden: { y: "110%", opacity: 0 },
+                      visible: {
+                        y: 0,
+                        opacity: 1,
+                        transition: { duration: 1.1, ease: [0.22, 1, 0.36, 1] },
                       },
-                    },
-                  }}
-                >
-                  {i === 2 ? <em className="italic text-kunyit-400">{word}</em> : word}
-                </motion.span>
-              ))}
-            </motion.h1>
+                    }}
+                  >
+                    {i === emphasizeIndex ? (
+                      <em className="italic text-kunyit-400 not-italic-safe">
+                        {word}
+                      </em>
+                    ) : (
+                      word
+                    )}
+                  </motion.span>
+                ))}
+              </motion.h1>
+            )}
 
-            <motion.p
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 1.4, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-8 md:mt-10 max-w-2xl text-lg md:text-xl text-paper-soft/85 leading-relaxed"
+              className="mt-8 md:mt-10 max-w-2xl"
             >
-              Kampung Citran bertengger di sudut Kotagede—kawasan cagar budaya
-              yang menyimpan denyut Mataram Islam. Gapura tua, gang beringkas,
-              dan warga yang guyub. Ini rumah kami.
-            </motion.p>
+              <Editable
+                contentKey="hero.subheadline"
+                defaultValue={content.subheadline ?? DEFAULTS.subheadline}
+                multiline
+                as="p"
+                className="text-lg md:text-xl text-paper-soft/85 leading-relaxed"
+              />
+            </motion.div>
           </div>
         </div>
 

@@ -24,22 +24,24 @@ export function EditFloatingToolbar() {
           type="button"
           onClick={toggleEditMode}
           className={cn(
-            "inline-flex items-center gap-2 px-3 py-2 rounded-full text-xs font-mono tracking-wider transition-colors",
+            "inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-mono tracking-wider font-medium transition-colors",
             editMode
-              ? "bg-kunyit-500 text-sogan-950 hover:bg-kunyit-400"
-              : "hover:bg-sogan-800 text-paper-soft",
+              ? // Aktif: kuning terang + text sogan-950 (very dark brown) supaya kontras
+                "bg-kunyit-400 text-sogan-950 hover:bg-kunyit-300 ring-1 ring-kunyit-300/50"
+              : // Idle: text terang di atas dark sogan-950 bg
+                "text-paper hover:bg-sogan-800",
           )}
           aria-pressed={editMode}
           title={editMode ? "Keluar dari mode edit" : "Masuk mode edit"}
         >
           {editMode ? (
             <>
-              <Eye size={13} strokeWidth={1.8} />
+              <Eye size={13} strokeWidth={2.2} />
               Selesai edit
             </>
           ) : (
             <>
-              <Pencil size={13} strokeWidth={1.8} />
+              <Pencil size={13} strokeWidth={2} />
               Edit halaman
             </>
           )}

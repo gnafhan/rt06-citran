@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, FileText, Users } from "lucide-react";
+import { LayoutDashboard, FileText, Users, Image as ImageIcon } from "lucide-react";
 import { KawungMark } from "@/components/kawung";
 import { SignOutButton } from "./sign-out-button";
 
@@ -7,6 +7,7 @@ const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/liputan", label: "Liputan", icon: FileText },
   { href: "/admin/pengurus", label: "Pengurus", icon: Users },
+  { href: "/admin/tampilan", label: "Tampilan", icon: ImageIcon },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

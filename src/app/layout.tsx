@@ -5,6 +5,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { EditModeProvider } from "@/components/editable/edit-mode-provider";
 import { createClient } from "@/lib/supabase/server";
+import { getAllContent } from "@/lib/site-content";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -62,7 +63,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   // Detect admin: kalau user login via Supabase, treat as admin.
-  // Public signup disabled, jadi cuma admin yang bisa login.
   let isAdmin = false;
   try {
     const supabase = await createClient();
@@ -74,15 +74,18 @@ export default async function RootLayout({
     // If Supabase not configured, isAdmin stays false
   }
 
+  // Fetch semua site_content sekali di root, di-share ke Navbar/Footer/pages
+  const content = await getAllContent();
+
   return (
     <html lang="id">
       <body
         className={`${fraunces.variable} ${jakarta.variable} ${jetbrains.variable} ${notoJawa.variable}`}
       >
         <EditModeProvider isAdmin={isAdmin}>
-          <Navbar />
+          <Navbar content={content} />
           <main className="min-h-screen">{children}</main>
-          <Footer />
+          <Footer content={content} />
         </EditModeProvider>
       </body>
     </html>

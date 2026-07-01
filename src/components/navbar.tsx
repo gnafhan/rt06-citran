@@ -7,15 +7,34 @@ import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { KawungMark } from "./kawung";
 import { cn } from "@/lib/utils";
+import { Editable } from "./editable/editable";
+
+interface Props {
+  content: Record<string, string>;
+}
+
+const DEFAULTS = {
+  "nav.brand": "RT 06 Citran",
+  "nav.brand_sub": "Bodon \u00b7 Jagalan \u00b7 Kotagede",
+  "nav.beranda": "Beranda",
+  "nav.tentang": "Tentang",
+  "nav.liputan": "Liputan",
+  "nav.pengurus": "Pengurus",
+  "nav.cta": "Kontak",
+};
 
 const NAV_ITEMS = [
-  { href: "/", label: "Beranda" },
-  { href: "/tentang", label: "Tentang" },
-  { href: "/liputan", label: "Liputan" },
-  { href: "/pengurus", label: "Pengurus" },
+  { href: "/", key: "nav.beranda" as const },
+  { href: "/tentang", key: "nav.tentang" as const },
+  { href: "/liputan", key: "nav.liputan" as const },
+  { href: "/pengurus", key: "nav.pengurus" as const },
 ];
 
-export function Navbar() {
+function pick(map: Record<string, string>, key: keyof typeof DEFAULTS) {
+  return map[key] ?? DEFAULTS[key];
+}
+
+export function Navbar({ content }: Props) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -27,7 +46,6 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Admin routes ga pake public navbar
   if (pathname?.startsWith("/admin")) return null;
 
   return (
@@ -45,12 +63,18 @@ export function Navbar() {
           <Link href="/" className="group flex items-center gap-3">
             <KawungMark className="h-8 w-8 text-sogan transition-transform duration-500 group-hover:rotate-45" />
             <div className="flex flex-col leading-none">
-              <span className="font-display text-lg text-sogan-900">
-                RT 06 Citran
-              </span>
-              <span className="eyebrow text-[10px] mt-0.5">
-                Bodon · Jagalan · Kotagede
-              </span>
+              <Editable
+                contentKey="nav.brand"
+                defaultValue={pick(content, "nav.brand")}
+                as="span"
+                className="font-display text-lg text-sogan-900"
+              />
+              <Editable
+                contentKey="nav.brand_sub"
+                defaultValue={pick(content, "nav.brand_sub")}
+                as="span"
+                className="eyebrow text-[10px] mt-0.5"
+              />
             </div>
           </Link>
 
@@ -71,12 +95,20 @@ export function Navbar() {
                         : "text-ink-soft hover:text-sogan-900",
                     )}
                   >
-                    {item.label}
+                    <Editable
+                      contentKey={item.key}
+                      defaultValue={pick(content, item.key)}
+                      as="span"
+                    />
                     {active && (
                       <motion.span
                         layoutId="nav-underline"
                         className="absolute inset-x-3 -bottom-0.5 h-px bg-sogan"
-                        transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 400,
+                          damping: 32,
+                        }}
                       />
                     )}
                   </Link>
@@ -90,7 +122,11 @@ export function Navbar() {
               href="/tentang#kontak"
               className="text-sm border border-sogan/20 hover:border-sogan/40 hover:bg-paper-soft px-4 py-2 rounded-md transition-all"
             >
-              Kontak
+              <Editable
+                contentKey="nav.cta"
+                defaultValue={pick(content, "nav.cta")}
+                as="span"
+              />
             </Link>
           </div>
 
@@ -126,7 +162,7 @@ export function Navbar() {
                     onClick={() => setOpen(false)}
                     className="block py-4 font-display text-3xl text-sogan-900 border-b border-sogan/10"
                   >
-                    {item.label}
+                    {pick(content, item.key)}
                   </Link>
                 </motion.li>
               ))}
