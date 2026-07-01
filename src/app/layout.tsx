@@ -3,6 +3,8 @@ import { Fraunces, Plus_Jakarta_Sans, JetBrains_Mono, Noto_Sans_Javanese } from 
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { EditModeProvider } from "@/components/editable/edit-mode-provider";
+import { createClient } from "@/lib/supabase/server";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -54,19 +56,34 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Detect admin: kalau user login via Supabase, treat as admin.
+  // Public signup disabled, jadi cuma admin yang bisa login.
+  let isAdmin = false;
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    isAdmin = !!user;
+  } catch {
+    // If Supabase not configured, isAdmin stays false
+  }
+
   return (
     <html lang="id">
       <body
         className={`${fraunces.variable} ${jakarta.variable} ${jetbrains.variable} ${notoJawa.variable}`}
       >
-        <Navbar />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
+        <EditModeProvider isAdmin={isAdmin}>
+          <Navbar />
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+        </EditModeProvider>
       </body>
     </html>
   );
