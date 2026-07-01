@@ -121,9 +121,28 @@ export function Editable({
   }
 
   // ---------- EDITING MODE ----------
+  //
+  // PENTING: kita SENGAJA ga inherit className parent ke input/textarea.
+  // Alasan: parent className sering bawa warna teks/font-size dari section
+  // (misal 'text-paper-soft/70' di footer gelap, atau 'text-[10px] eyebrow').
+  // Kalau di-inherit, input jadi krem-di-krem (invisible) atau size aneh.
+  // Kita reset ke style neutral editor: bg krem terang, teks sogan gelap,
+  // font body, size normal, always readable regardless of parent context.
+  //
+  // Layout tombol pake stack vertikal (block) supaya Simpan/Batal ga nempel
+  // input meski parent-nya inline (<p>, <h3>, <Link>) — kita wrap dgn
+  // display:block via `!block` biar force di semua konteks.
   if (editing) {
     return (
-      <span className="relative inline-flex flex-col gap-2 w-full my-1 group">
+      <span
+        className="editable-editing relative w-full my-2 not-italic"
+        style={{
+          display: "block",
+          fontStyle: "normal",
+          letterSpacing: "normal",
+          textTransform: "none",
+        }}
+      >
         {multiline ? (
           <textarea
             ref={(r) => {
@@ -136,47 +155,56 @@ export function Editable({
               e.target.style.height = e.target.scrollHeight + "px";
             }}
             onKeyDown={onKeyDown}
-            className={cn(
-              "w-full bg-paper border-2 border-kunyit-500 rounded-md px-3 py-2 focus:outline-none focus:border-sogan resize-none",
-              className,
-            )}
+            className="block w-full bg-paper text-sogan-900 placeholder:text-ink-mute border-2 border-kunyit-500 rounded-md px-3 py-2 text-base leading-snug font-sans focus:outline-none focus:border-sogan focus:ring-2 focus:ring-kunyit-500/25 resize-none shadow-sm"
             rows={3}
           />
         ) : (
           <input
+            type="text"
             ref={(r) => {
               inputRef.current = r;
             }}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={onKeyDown}
-            className={cn(
-              "w-full bg-paper border-2 border-kunyit-500 rounded-md px-3 py-2 focus:outline-none focus:border-sogan",
-              className,
-            )}
+            className="block w-full bg-paper text-sogan-900 placeholder:text-ink-mute border-2 border-kunyit-500 rounded-md px-3 py-2 text-base leading-snug font-sans focus:outline-none focus:border-sogan focus:ring-2 focus:ring-kunyit-500/25 shadow-sm"
           />
         )}
-        <span className="flex items-center gap-2">
+        <span
+          className="mt-2 flex flex-wrap items-center gap-2"
+          style={{ display: "flex" }}
+        >
           <button
             type="button"
             onClick={save}
             disabled={saving}
-            className="inline-flex items-center gap-1.5 bg-sogan-900 text-paper px-3 py-1.5 rounded text-xs hover:bg-sogan-800 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 bg-sogan-900 text-paper px-4 py-2 rounded-md text-sm font-medium hover:bg-sogan-800 disabled:opacity-50 shadow-sm not-italic"
+            style={{ fontStyle: "normal", letterSpacing: "normal" }}
           >
-            {saving ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+            {saving ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : (
+              <Check size={14} />
+            )}
             Simpan
           </button>
           <button
             type="button"
             onClick={cancel}
             disabled={saving}
-            className="inline-flex items-center gap-1.5 border border-sogan/25 text-sogan-700 px-3 py-1.5 rounded text-xs hover:bg-paper-soft disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 bg-paper border border-sogan/30 text-sogan-900 px-4 py-2 rounded-md text-sm font-medium hover:bg-paper-soft hover:border-sogan/60 disabled:opacity-50 not-italic"
+            style={{ fontStyle: "normal", letterSpacing: "normal" }}
           >
-            <X size={12} />
+            <X size={14} />
             Batal
           </button>
-          <span className="text-[10px] font-mono text-ink-mute hidden sm:inline">
-            {multiline ? "Ctrl+Enter simpan · Esc batal" : "Enter simpan · Esc batal"}
+          <span
+            className="text-[11px] font-mono text-ink-mute hidden sm:inline ml-1 not-italic"
+            style={{ fontStyle: "normal", letterSpacing: "normal", textTransform: "none" }}
+          >
+            {multiline
+              ? "Ctrl+Enter simpan · Esc batal"
+              : "Enter simpan · Esc batal"}
           </span>
         </span>
       </span>
