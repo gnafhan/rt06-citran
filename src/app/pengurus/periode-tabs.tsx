@@ -2,67 +2,125 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { User, Phone } from "lucide-react";
+import { User, Phone, LayoutGrid, Network } from "lucide-react";
 import type { Pengurus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { KawungMark } from "@/components/kawung";
+import { StrukturDiagram } from "./struktur-diagram";
 
 interface Props {
   pengurus: Pengurus[];
   periodes: string[];
 }
 
+type ViewMode = "diagram" | "grid";
+
 export function PeriodeTabs({ pengurus, periodes }: Props) {
   const [active, setActive] = useState(periodes[0]);
+  const [view, setView] = useState<ViewMode>("diagram");
   const currentPengurus = pengurus.filter((p) => p.periode === active);
 
   return (
     <div>
       {/* Tab bar */}
-      <div
-        role="tablist"
-        aria-label="Periode kepengurusan"
-        className="flex flex-wrap items-center gap-2 mb-16 pb-2 border-b border-sogan/10"
-      >
-        {periodes.map((periode) => {
-          const isActive = periode === active;
-          return (
-            <button
-              key={periode}
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => setActive(periode)}
-              className={cn(
-                "relative px-5 py-3 text-sm font-mono tracking-widest transition-colors",
-                isActive
-                  ? "text-sogan-900"
-                  : "text-ink-mute hover:text-sogan-700",
-              )}
-            >
-              <span className="relative z-10">Periode {periode}</span>
-              {isActive && (
-                <motion.span
-                  layoutId="periode-underline"
-                  className="absolute inset-x-3 -bottom-[9px] h-[2px] bg-sogan"
-                  transition={{ type: "spring", stiffness: 400, damping: 32 }}
-                />
-              )}
-            </button>
-          );
-        })}
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-16 pb-2 border-b border-sogan/10">
+        <div
+          role="tablist"
+          aria-label="Periode kepengurusan"
+          className="flex flex-wrap items-center gap-2"
+        >
+          {periodes.map((periode) => {
+            const isActive = periode === active;
+            return (
+              <button
+                key={periode}
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setActive(periode)}
+                className={cn(
+                  "relative px-5 py-3 text-sm font-mono tracking-widest transition-colors",
+                  isActive
+                    ? "text-sogan-900"
+                    : "text-ink-mute hover:text-sogan-700",
+                )}
+              >
+                <span className="relative z-10">Periode {periode}</span>
+                {isActive && (
+                  <motion.span
+                    layoutId="periode-underline"
+                    className="absolute inset-x-3 -bottom-[9px] h-[2px] bg-sogan"
+                    transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* View mode toggle */}
+        <div
+          role="group"
+          aria-label="Tampilan"
+          className="inline-flex items-center gap-1 p-1 rounded-md border border-sogan/15 bg-paper-soft"
+        >
+          <button
+            type="button"
+            aria-label="Tampilan bagan struktur"
+            aria-pressed={view === "diagram"}
+            onClick={() => setView("diagram")}
+            className={cn(
+              "inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-mono tracking-wider transition-colors",
+              view === "diagram"
+                ? "bg-sogan-900 text-paper"
+                : "text-ink-mute hover:text-sogan-900",
+            )}
+          >
+            <Network size={13} strokeWidth={1.6} />
+            Bagan
+          </button>
+          <button
+            type="button"
+            aria-label="Tampilan grid"
+            aria-pressed={view === "grid"}
+            onClick={() => setView("grid")}
+            className={cn(
+              "inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-mono tracking-wider transition-colors",
+              view === "grid"
+                ? "bg-sogan-900 text-paper"
+                : "text-ink-mute hover:text-sogan-900",
+            )}
+          >
+            <LayoutGrid size={13} strokeWidth={1.6} />
+            Grid
+          </button>
+        </div>
       </div>
 
-      {/* Grid */}
+      {/* Content: Diagram or Grid */}
       <AnimatePresence mode="wait">
         <motion.div
-          key={active}
+          key={`${active}-${view}`}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
-          {currentPengurus.map((p, i) => (
+          {view === "diagram" ? (
+            <StrukturDiagram pengurus={currentPengurus} />
+          ) : (
+            <GridView pengurus={currentPengurus} />
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// Extracted grid view supaya struktur code lebih clean
+function GridView({ pengurus }: { pengurus: Pengurus[] }) {
+  return (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {pengurus.map((p, i) => (
             <motion.div
               key={p.id}
               initial={{ opacity: 0, y: 20 }}
@@ -122,8 +180,6 @@ export function PeriodeTabs({ pengurus, periodes }: Props) {
               )}
             </motion.div>
           ))}
-        </motion.div>
-      </AnimatePresence>
     </div>
   );
 }
