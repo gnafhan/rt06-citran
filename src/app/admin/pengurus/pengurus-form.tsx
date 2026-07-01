@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 import type { Pengurus } from "@/lib/types";
 import { ImageUpload } from "@/components/image-upload";
 
@@ -26,12 +26,17 @@ const JABATAN_PRESETS = [
 export function PengurusForm({ pengurus, action, existingPeriodes }: Props) {
   const [loading, setLoading] = useState(false);
   const [photoUrl, setPhotoUrl] = useState(pengurus?.photo_url ?? "");
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
+    setError(null);
     try {
       await action(formData);
-    } finally {
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (msg.includes("NEXT_REDIRECT")) return;
+      setError(msg || "Gagal menyimpan. Coba lagi ya.");
       setLoading(false);
     }
   }
@@ -129,6 +134,16 @@ export function PengurusForm({ pengurus, action, existingPeriodes }: Props) {
           placeholder="Menjabat sejak..."
         />
       </div>
+
+      {error && (
+        <div className="flex items-start gap-2 p-4 bg-bata/10 border border-bata/20 rounded-md text-sm text-bata">
+          <AlertCircle size={16} strokeWidth={1.8} className="shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium mb-1">Gagal menyimpan</p>
+            <p className="opacity-90">{error}</p>
+          </div>
+        </div>
+      )}
 
       <div className="flex gap-3 pt-4 border-t border-sogan/10">
         <button

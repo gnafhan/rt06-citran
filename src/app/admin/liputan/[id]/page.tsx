@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { getArticles } from "@/lib/queries";
+import { getArticleByIdAdmin } from "@/lib/queries";
 import { ArticleForm } from "../article-form";
 import { updateArticle, deleteArticle } from "../actions";
 import { DeleteButton } from "./delete-button";
@@ -12,8 +12,7 @@ interface Props {
 
 export default async function EditArticlePage({ params }: Props) {
   const { id } = await params;
-  const articles = await getArticles();
-  const article = articles.find((a) => a.id === id);
+  const article = await getArticleByIdAdmin(id);
   if (!article) notFound();
 
   const boundUpdate = updateArticle.bind(null, id);

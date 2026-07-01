@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { getPengurus } from "@/lib/queries";
+import { getPengurusAdmin, getPengurusByIdAdmin } from "@/lib/queries";
 import { getPeriodes } from "@/lib/sample-data";
 import { PengurusForm } from "../pengurus-form";
 import { updatePengurus, deletePengurus } from "../actions";
@@ -13,9 +13,9 @@ interface Props {
 
 export default async function EditPengurusPage({ params }: Props) {
   const { id } = await params;
-  const all = await getPengurus();
-  const pengurus = all.find((p) => p.id === id);
+  const pengurus = await getPengurusByIdAdmin(id);
   if (!pengurus) notFound();
+  const all = await getPengurusAdmin();
 
   const boundUpdate = updatePengurus.bind(null, id);
   const boundDelete = deletePengurus.bind(null, id);

@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function createPengurus(formData: FormData) {
   const supabase = await createClient();
 
@@ -30,6 +32,13 @@ export async function createPengurus(formData: FormData) {
 }
 
 export async function updatePengurus(id: string, formData: FormData) {
+  if (!UUID_RE.test(id)) {
+    throw new Error(
+      "Pengurus ini adalah contoh yang belum tersimpan di database. " +
+      "Silakan tambah pengurus baru dari tombol 'Tambah' di daftar pengurus."
+    );
+  }
+
   const supabase = await createClient();
 
   const updates = {
@@ -55,6 +64,7 @@ export async function updatePengurus(id: string, formData: FormData) {
 }
 
 export async function deletePengurus(id: string) {
+  if (!UUID_RE.test(id)) throw new Error("ID tidak valid.");
   const supabase = await createClient();
   const { error } = await supabase.from("pengurus").delete().eq("id", id);
   if (error) throw new Error(error.message);

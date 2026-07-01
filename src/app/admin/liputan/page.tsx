@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
-import { getArticles } from "@/lib/queries";
+import { getArticlesAdmin } from "@/lib/queries";
 import { CATEGORY_LABELS } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
 export const revalidate = 0;
 
 export default async function AdminLiputanPage() {
-  const articles = await getArticles();
+  const articles = await getArticlesAdmin();
 
   return (
     <div>
@@ -30,7 +30,11 @@ export default async function AdminLiputanPage() {
       <div className="border border-sogan/10 rounded-lg divide-y divide-sogan/10 overflow-hidden">
         {articles.length === 0 && (
           <div className="p-12 text-center text-ink-mute">
-            Belum ada liputan.
+            <p>Belum ada liputan.</p>
+            <p className="mt-2 text-xs">
+              Klik <span className="font-mono">Tulis baru</span> di kanan atas
+              untuk mulai.
+            </p>
           </div>
         )}
         {articles.map((a) => (

@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { FileText, Users, ArrowUpRight } from "lucide-react";
-import { getArticles, getPengurus } from "@/lib/queries";
+import { getArticlesAdmin, getPengurusAdmin } from "@/lib/queries";
 
 export const revalidate = 0;
 
 export default async function AdminDashboardPage() {
   const [articles, pengurus] = await Promise.all([
-    getArticles(),
-    getPengurus(),
+    getArticlesAdmin(),
+    getPengurusAdmin(),
   ]);
 
   return (

@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { getPengurus } from "@/lib/queries";
+import { getPengurusAdmin } from "@/lib/queries";
 import { getPeriodes } from "@/lib/sample-data";
 import { PengurusForm } from "../pengurus-form";
 import { createPengurus } from "../actions";
 
 export default async function NewPengurusPage() {
-  const existing = await getPengurus();
+  const existing = await getPengurusAdmin();
   const periodes = getPeriodes(existing);
 
   return (

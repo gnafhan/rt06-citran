@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { Plus, Pencil } from "lucide-react";
-import { getPengurus } from "@/lib/queries";
+import { getPengurusAdmin } from "@/lib/queries";
 import { getPeriodes } from "@/lib/sample-data";
 
 export const revalidate = 0;
 
 export default async function AdminPengurusPage() {
-  const pengurus = await getPengurus();
+  const pengurus = await getPengurusAdmin();
   const periodes = getPeriodes(pengurus);
 
   return (

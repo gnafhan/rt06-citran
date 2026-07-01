@@ -43,6 +43,15 @@ export async function createArticle(formData: FormData) {
 }
 
 export async function updateArticle(id: string, formData: FormData) {
+  // Guard: id harus UUID valid. Kalau engga, kasih pesan jelas ke user
+  // bukan lempar Postgres 22P02 error yang bikin generic "server error".
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+    throw new Error(
+      "Artikel ini adalah contoh yang belum tersimpan di database. " +
+      "Silakan buat liputan baru dari tombol 'Tulis baru' di dashboard admin."
+    );
+  }
+
   const supabase = await createClient();
 
   const updates = {
@@ -56,6 +65,13 @@ export async function updateArticle(id: string, formData: FormData) {
     updated_at: new Date().toISOString(),
   };
 
+  // Fetch existing slug supaya kita bisa revalidate path yang tepat
+  const { data: existing } = await supabase
+    .from("articles")
+    .select("slug")
+    .eq("id", id)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("articles")
     .update(updates)
@@ -64,12 +80,15 @@ export async function updateArticle(id: string, formData: FormData) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/liputan");
-  revalidatePath(`/liputan/${updates.title}`);
+  if (existing?.slug) revalidatePath(`/liputan/${existing.slug}`);
   revalidatePath("/admin/liputan");
   redirect("/admin/liputan");
 }
 
 export async function deleteArticle(id: string) {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+    throw new Error("ID tidak valid.");
+  }
   const supabase = await createClient();
   const { error } = await supabase.from("articles").delete().eq("id", id);
   if (error) throw new Error(error.message);
