@@ -42,6 +42,7 @@ export function Hero({
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const [videoFailed, setVideoFailed] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
   const { editMode } = useEditMode();
 
   const { scrollYProgress } = useScroll({
@@ -76,28 +77,34 @@ export function Hero({
     >
       {/* Aerial media layer (parallax) */}
       <motion.div style={{ y, scale }} className="absolute inset-0">
-        {showVideo ? (
+        {/* Base layer: foto selalu ke-render duluan (LCP cepat, ga nunggu video).
+            Video (kalau ada) nge-fade di atasnya begitu udah beneran mulai main,
+            jadi ga ada "loncatan" kaku dari poster ke frame video. */}
+        <div
+          className="absolute inset-0 h-full w-full bg-cover bg-center"
+          style={{ backgroundImage: `url('${imageSrc}')` }}
+        />
+        {showVideo && (
           <video
+            key={videoSources![0]?.src}
             autoPlay
             muted
             loop
             playsInline
             preload="auto"
-            poster={imageSrc}
+            onCanPlay={() => setVideoReady(true)}
+            onPlaying={() => setVideoReady(true)}
             onError={() => setVideoFailed(true)}
             onStalled={() => setVideoFailed(true)}
-            className="h-full w-full object-cover"
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-out ${
+              videoReady ? "opacity-100" : "opacity-0"
+            }`}
             aria-hidden="true"
           >
             {videoSources!.map((s) => (
               <source key={s.src} src={s.src} type={s.type} />
             ))}
           </video>
-        ) : (
-          <div
-            className="h-full w-full bg-cover bg-center"
-            style={{ backgroundImage: `url('${imageSrc}')` }}
-          />
         )}
         {/* Darkening scrim */}
         <div className="absolute inset-0 bg-gradient-to-b from-sogan-950/25 via-sogan-950/30 to-sogan-950/70" />
