@@ -172,6 +172,18 @@ body {
   animation: slow-rotate 60s linear infinite;
 }
 
+/* Hero video loading shimmer — sweep halus di atas poster (frame pertama
+   video) selagi video utama masih buffering. Kasih sinyal "masih memuat"
+   tanpa nutupin foto placeholder yang udah representatif. */
+@keyframes hero-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-hero-shimmer {
+  animation: hero-shimmer 1.8s ease-in-out infinite;
+}
+
 /* Reveal on mount */
 @keyframes reveal-up {
   from {

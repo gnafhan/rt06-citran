@@ -56,6 +56,7 @@ export function Hero({
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, editMode ? 1 : 0]);
 
   const showVideo = videoSources && videoSources.length > 0 && !videoFailed && !reduce;
+  const showLoadingPulse = showVideo && !videoReady;
 
   const headline = content.headline ?? DEFAULTS.headline;
 
@@ -81,9 +82,22 @@ export function Hero({
             Video (kalau ada) nge-fade di atasnya begitu udah beneran mulai main,
             jadi ga ada "loncatan" kaku dari poster ke frame video. */}
         <div
-          className="absolute inset-0 h-full w-full bg-cover bg-center"
+          className={`absolute inset-0 h-full w-full bg-cover bg-center transition-transform duration-[3000ms] ease-out ${
+            showLoadingPulse ? "scale-[1.03]" : "scale-100"
+          }`}
           style={{ backgroundImage: `url('${imageSrc}')` }}
         />
+        {/* Subtle shimmer sweep while video is buffering — signals "masih memuat"
+            tanpa nutupin foto poster (yang sekarang = frame pertama video asli,
+            jadi transisi ke video mulus, ga ada loncatan). */}
+        {showLoadingPulse && (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 overflow-hidden"
+          >
+            <div className="absolute inset-0 -translate-x-full animate-hero-shimmer bg-gradient-to-r from-transparent via-paper/10 to-transparent" />
+          </div>
+        )}
         {showVideo && (
           <video
             key={videoSources![0]?.src}
