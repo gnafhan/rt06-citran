@@ -124,14 +124,25 @@ body {
   letter-spacing: -0.01em;
 }
 
-/* Small caps meta labels */
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
-  font-weight: 500;
+/* Small caps meta labels.
+   IMPORTANT: wrapped in `@layer base` on purpose. Tailwind v4 treats any
+   plain (unlayered) CSS as higher-priority than ALL utility classes,
+   regardless of source order or specificity. Without this @layer wrapper,
+   `.eyebrow` permanently wins over every `text-kunyit-400` / `text-sogan-500`
+   / `text-paper-soft/80` utility applied alongside it, so all 20+ eyebrow
+   labels site-wide (footer headings, "Cerita Pilihan", heritage card tags,
+   hero meta line, etc.) rendered as flat gray instead of their intended
+   accent color. Putting it in `base` keeps it below `utilities` in the
+   cascade so color utilities can override the default gray as intended. */
+@layer base {
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    font-weight: 500;
+  }
 }
 
 /* ============================================

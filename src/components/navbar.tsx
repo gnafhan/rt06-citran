@@ -48,6 +48,14 @@ export function Navbar({ content }: Props) {
 
   if (pathname?.startsWith("/admin")) return null;
 
+  // Only the homepage has a full-bleed photo/video hero directly behind the
+  // fixed transparent navbar. Every other route (tentang/liputan/pengurus)
+  // starts on the light cream body background, where the default dark nav
+  // colors already read fine. So "light nav mode" only kicks in on "/" while
+  // unscrolled — once scrolled, the paper/85 backdrop takes over and dark
+  // text works everywhere.
+  const onDarkHero = pathname === "/" && !scrolled;
+
   return (
     <>
       <header
@@ -61,19 +69,30 @@ export function Navbar({ content }: Props) {
       >
         <nav className="container-editorial flex h-full items-center justify-between">
           <Link href="/" className="group flex items-center gap-3">
-            <KawungMark className="h-8 w-8 text-sogan transition-transform duration-500 group-hover:rotate-45" />
+            <KawungMark
+              className={cn(
+                "h-8 w-8 transition-[transform,color] duration-500 group-hover:rotate-45",
+                onDarkHero ? "text-paper" : "text-sogan",
+              )}
+            />
             <div className="flex flex-col leading-none">
               <Editable
                 contentKey="nav.brand"
                 defaultValue={pick(content, "nav.brand")}
                 as="span"
-                className="font-display text-lg text-sogan-900"
+                className={cn(
+                  "font-display text-lg transition-colors duration-500",
+                  onDarkHero ? "text-paper" : "text-sogan-900",
+                )}
               />
               <Editable
                 contentKey="nav.brand_sub"
                 defaultValue={pick(content, "nav.brand_sub")}
                 as="span"
-                className="eyebrow text-[10px] mt-0.5"
+                className={cn(
+                  "eyebrow text-[10px] mt-0.5 transition-colors duration-500",
+                  onDarkHero && "text-paper-soft/70",
+                )}
               />
             </div>
           </Link>
@@ -89,10 +108,14 @@ export function Navbar({ content }: Props) {
                   <Link
                     href={item.href}
                     className={cn(
-                      "relative px-4 py-2 text-sm transition-colors",
-                      active
-                        ? "text-sogan-900"
-                        : "text-ink-soft hover:text-sogan-900",
+                      "relative px-4 py-2 text-sm transition-colors duration-500",
+                      onDarkHero
+                        ? active
+                          ? "text-paper"
+                          : "text-paper-soft/75 hover:text-paper"
+                        : active
+                          ? "text-sogan-900"
+                          : "text-ink-soft hover:text-sogan-900",
                     )}
                   >
                     <Editable
@@ -103,7 +126,10 @@ export function Navbar({ content }: Props) {
                     {active && (
                       <motion.span
                         layoutId="nav-underline"
-                        className="absolute inset-x-3 -bottom-0.5 h-px bg-sogan"
+                        className={cn(
+                          "absolute inset-x-3 -bottom-0.5 h-px transition-colors duration-500",
+                          onDarkHero ? "bg-paper" : "bg-sogan",
+                        )}
                         transition={{
                           type: "spring",
                           stiffness: 400,
@@ -120,7 +146,12 @@ export function Navbar({ content }: Props) {
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/tentang#kontak"
-              className="text-sm border border-sogan/20 hover:border-sogan/40 hover:bg-paper-soft px-4 py-2 rounded-md transition-all"
+              className={cn(
+                "text-sm px-4 py-2 rounded-md transition-all duration-500",
+                onDarkHero
+                  ? "border border-paper-soft/40 text-paper hover:border-paper-soft/70 hover:bg-paper/10"
+                  : "border border-sogan/20 text-ink hover:border-sogan/40 hover:bg-paper-soft",
+              )}
             >
               <Editable
                 contentKey="nav.cta"
@@ -131,7 +162,10 @@ export function Navbar({ content }: Props) {
           </div>
 
           <button
-            className="md:hidden p-2 -mr-2 text-sogan-900"
+            className={cn(
+              "md:hidden p-2 -mr-2 transition-colors duration-500",
+              onDarkHero ? "text-paper" : "text-sogan-900",
+            )}
             onClick={() => setOpen((v) => !v)}
             aria-label="Menu"
           >

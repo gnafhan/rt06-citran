@@ -120,8 +120,14 @@ export function Hero({
             ))}
           </video>
         )}
-        {/* Darkening scrim */}
+        {/* Darkening scrim — base gradient buat headline area di bawah */}
         <div className="absolute inset-0 bg-gradient-to-b from-sogan-950/25 via-sogan-950/30 to-sogan-950/70" />
+        {/* Extra scrim khusus zona navbar (top ~160px). Navbar transparan +
+            foto hero yang terangnya ga rata (atap rumah, langit) bikin nav
+            item & logo kontrasnya jelek kalau cuma andelin gradient di atas
+            (yang cuma 25% opacity di top). Ini nambah dark fade independen
+            biar nav selalu legible di halaman manapun yang pakai Hero. */}
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-sogan-950/60 to-transparent" />
       </motion.div>
 
       <KawungPattern
