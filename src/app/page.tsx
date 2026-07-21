@@ -5,33 +5,7 @@ import { Reveal, StaggerGroup, StaggerItem } from "@/components/reveal";
 import { KawungDivider, KawungMark, KawungPattern } from "@/components/kawung";
 import { Editable } from "@/components/editable/editable";
 import { getAllContent, pick } from "@/lib/site-content";
-
-const HERITAGE_SITES = [
-  {
-    number: "01",
-    title: "Masjid Gedhe Mataram",
-    year: "1587",
-    description:
-      "Masjid tertua di Yogyakarta, dibangun era Panembahan Senopati sebagai pusat spiritual Mataram Islam. Jaraknya cuma beberapa langkah dari gapura Citran.",
-    tag: "Cagar Budaya",
-  },
-  {
-    number: "02",
-    title: "Makam Raja-Raja Mataram",
-    year: "abad ke-16",
-    description:
-      "Kompleks pemakaman Panembahan Senopati, Sri Sultan Hamengkurat I, dan raja-raja awal Mataram. Ziarah tetap dijaga hingga hari ini.",
-    tag: "Situs Sejarah",
-  },
-  {
-    number: "03",
-    title: "Kampung Kotagede",
-    year: "sejak 1584",
-    description:
-      "Ibu kota pertama Kesultanan Mataram Islam. Gang-gang sempit, rumah kalang, dan bengkel perak yang masih berdenyut sampai sekarang.",
-    tag: "Warisan Hidup",
-  },
-];
+import { HERITAGE_SITES } from "@/lib/heritage-data";
 
 const HIGHLIGHTS = [
   { icon: MapPin, key: "highlight.1", labelDef: "Wilayah", valueDef: "Bodon RT 06" },
@@ -176,7 +150,7 @@ export default async function HomePage() {
       {/* ================================
           HERITAGE SITES — Editorial cards
           ================================ */}
-      <section className="relative py-32 md:py-40">
+      <section id="warisan" className="relative py-32 md:py-40">
         <div className="container-editorial">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 md:mb-24">
             <Reveal>
@@ -217,44 +191,53 @@ export default async function HomePage() {
 
           <StaggerGroup className="grid gap-6 md:grid-cols-3" stagger={0.15}>
             {HERITAGE_SITES.map((site) => (
-              <StaggerItem
-                key={site.number}
-                className="group relative bg-paper-soft border border-sogan/10 rounded-lg p-8 md:p-10 hover:bg-paper hover:border-sogan/20 transition-all duration-500 hover:-translate-y-1"
-              >
-                <div className="flex items-start justify-between mb-8">
-                  <span className="font-mono text-xs text-sogan-500 tracking-widest">
-                    {site.number}
-                  </span>
-                  <KawungMark className="h-6 w-6 text-kunyit-500 opacity-40 transition-all duration-700 group-hover:opacity-90 group-hover:rotate-45" />
-                </div>
+              <StaggerItem key={site.number}>
+                <Link
+                  href={`/warisan/${site.slug}`}
+                  className="group relative block h-full bg-paper-soft border border-sogan/10 rounded-lg p-8 md:p-10 hover:bg-paper hover:border-sogan/20 transition-all duration-500 hover:-translate-y-1"
+                >
+                  <div className="flex items-start justify-between mb-8">
+                    <span className="font-mono text-xs text-sogan-500 tracking-widest">
+                      {site.number}
+                    </span>
+                    <KawungMark className="h-6 w-6 text-kunyit-500 opacity-40 transition-all duration-700 group-hover:opacity-90 group-hover:rotate-45" />
+                  </div>
 
-                <Editable
-                  contentKey={`home.heritage.${site.number}.tag`}
-                  defaultValue={pick(content, `home.heritage.${site.number}.tag`, site.tag)}
-                  as="p"
-                  className="eyebrow text-[10px] text-kunyit-600 mb-2"
-                />
-                <h3 className="font-display text-2xl md:text-3xl text-sogan-900 leading-tight">
                   <Editable
-                    contentKey={`home.heritage.${site.number}.title`}
-                    defaultValue={pick(content, `home.heritage.${site.number}.title`, site.title)}
-                    as="span"
+                    contentKey={`home.heritage.${site.number}.tag`}
+                    defaultValue={pick(content, `home.heritage.${site.number}.tag`, site.tag)}
+                    as="p"
+                    className="eyebrow text-[10px] text-kunyit-600 mb-2"
                   />
-                </h3>
-                <p className="font-mono text-xs text-ink-mute mt-1 mb-6">
+                  <h3 className="font-display text-2xl md:text-3xl text-sogan-900 leading-tight">
+                    <Editable
+                      contentKey={`home.heritage.${site.number}.title`}
+                      defaultValue={pick(content, `home.heritage.${site.number}.title`, site.title)}
+                      as="span"
+                    />
+                  </h3>
+                  <p className="font-mono text-xs text-ink-mute mt-1 mb-6">
+                    <Editable
+                      contentKey={`home.heritage.${site.number}.year`}
+                      defaultValue={pick(content, `home.heritage.${site.number}.year`, site.year)}
+                      as="span"
+                    />
+                  </p>
                   <Editable
-                    contentKey={`home.heritage.${site.number}.year`}
-                    defaultValue={pick(content, `home.heritage.${site.number}.year`, site.year)}
-                    as="span"
+                    contentKey={`home.heritage.${site.number}.desc`}
+                    defaultValue={pick(content, `home.heritage.${site.number}.desc`, site.description)}
+                    as="p"
+                    multiline
+                    className="text-sm text-ink-soft leading-relaxed"
                   />
-                </p>
-                <Editable
-                  contentKey={`home.heritage.${site.number}.desc`}
-                  defaultValue={pick(content, `home.heritage.${site.number}.desc`, site.description)}
-                  as="p"
-                  multiline
-                  className="text-sm text-ink-soft leading-relaxed"
-                />
+                  <span className="mt-6 inline-flex items-center gap-2 text-xs eyebrow text-sogan group-hover:text-sogan-900 transition-colors">
+                    Baca selengkapnya
+                    <ArrowUpRight
+                      size={12}
+                      className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                    />
+                  </span>
+                </Link>
               </StaggerItem>
             ))}
           </StaggerGroup>
