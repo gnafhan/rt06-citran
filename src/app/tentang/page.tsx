@@ -54,8 +54,8 @@ const CONTACTS = [
     key: "wa",
     icon: Phone,
     label: "WhatsApp Ketua RT",
-    value: "0812-xxxx-xxxx",
-    href: "https://wa.me/62812xxxxxxxx",
+    value: "+62 895-3596-59806",
+    href: "https://wa.me/62895359659806",
   },
   {
     key: "email",
