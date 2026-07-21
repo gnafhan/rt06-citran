@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { KawungMark } from "./kawung";
 import { cn } from "@/lib/utils";
 import { Editable } from "./editable/editable";
 
@@ -69,11 +69,13 @@ export function Navbar({ content }: Props) {
       >
         <nav className="container-editorial flex h-full items-center justify-between">
           <Link href="/" className="group flex items-center gap-3">
-            <KawungMark
-              className={cn(
-                "h-8 w-8 transition-[transform,color] duration-500 group-hover:rotate-45",
-                onDarkHero ? "text-paper" : "text-sogan",
-              )}
+            <Image
+              src="/logo.png"
+              alt="Logo RT 06 Citran"
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-full transition-transform duration-500 group-hover:rotate-12"
+              priority
             />
             <div className="flex flex-col leading-none">
               <Editable
