@@ -34,7 +34,9 @@ export default async function PengurusPage() {
           </Reveal>
           <Reveal delay={0.3}>
             <p className="mt-10 max-w-2xl text-lg text-ink-soft leading-relaxed">
-              Kepengurusan RT berganti tiap tiga tahun. Halaman ini menyimpan
+              Kepengurusan RT berganti tiap tiga tahun untuk aturan lama
+              (sebelum tahun 2026), namun semenjak tahun 2026 durasi
+              kepengurusan RT menjadi tiap lima tahun. Halaman ini menyimpan
               rekam jejak setiap periode—supaya tidak ada nama yang hilang
               begitu masa jabatan berakhir.
             </p>
