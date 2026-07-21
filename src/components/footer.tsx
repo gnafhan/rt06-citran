@@ -179,6 +179,21 @@ export function Footer({ content }: Props) {
             className="font-mono"
           />
         </div>
+
+        <div className="mt-4 text-center md:text-left text-xs text-paper-soft/40">
+          <p>
+            Dibuat oleh{" "}
+            <a
+              href="https://nafhan.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-kunyit-400/70 hover:text-kunyit-400 transition"
+            >
+              Ghifari Nafhan
+            </a>
+            , Tim KKN PPM UGM
+          </p>
+        </div>
       </div>
     </footer>
   );
