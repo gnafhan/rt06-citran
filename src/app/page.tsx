@@ -4,7 +4,9 @@ import { Hero } from "@/components/hero";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/reveal";
 import { KawungDivider, KawungMark, KawungPattern } from "@/components/kawung";
 import { Editable } from "@/components/editable/editable";
+import { FeaturedCarousel } from "@/components/featured-carousel";
 import { getAllContent, pick } from "@/lib/site-content";
+import { getArticles } from "@/lib/queries";
 import { HERITAGE_SITES } from "@/lib/heritage-data";
 
 const HIGHLIGHTS = [
@@ -18,6 +20,7 @@ export const revalidate = 0;
 
 export default async function HomePage() {
   const content = await getAllContent();
+  const articles = await getArticles();
 
   // Hero media: admin bisa ganti via /admin/tampilan. Kalau kosong, fallback
   // ke Pexels placeholder.
@@ -245,7 +248,7 @@ export default async function HomePage() {
       </section>
 
       {/* ================================
-          FEATURED STORY — Tim Kroncong teaser
+          FEATURED STORY — Liputan carousel
           ================================ */}
       <section className="relative py-32 md:py-40 bg-sogan-900 text-paper-soft overflow-hidden">
         <KawungPattern
@@ -254,80 +257,10 @@ export default async function HomePage() {
         />
 
         <div className="container-editorial relative">
-          <div className="grid gap-16 md:grid-cols-2 items-center">
-            <Reveal>
-              <div className="aspect-[4/5] relative overflow-hidden rounded-lg border border-paper-soft/10 group">
-                <div
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-[2s] group-hover:scale-105"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(180deg, transparent 40%, rgba(31,26,21,0.4) 100%), url('https://picsum.photos/seed/kroncong-citran/800/1000')",
-                  }}
-                />
-                <div className="absolute bottom-6 left-6 right-6">
-                  <p className="eyebrow text-kunyit-400 text-[10px]">
-                    Sedang diliput
-                  </p>
-                  <p className="font-display italic text-2xl mt-1 text-paper">
-                    Tim Kroncong Citran
-                  </p>
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.2}>
-              <div>
-                <Editable
-                  contentKey="home.featured.eyebrow"
-                  defaultValue={pick(content, "home.featured.eyebrow", "Cerita Pilihan")}
-                  as="p"
-                  className="eyebrow text-kunyit-400"
-                />
-                <h2 className="mt-6 font-display text-4xl md:text-5xl lg:text-6xl text-paper leading-[1.05]">
-                  <Editable
-                    contentKey="home.featured.title"
-                    defaultValue={pick(
-                      content,
-                      "home.featured.title",
-                      "Suami Bu Rini, dan senar-senar yang tak pernah putus.",
-                    )}
-                    multiline
-                    as="span"
-                  />
-                </h2>
-                <Editable
-                  contentKey="home.featured.body"
-                  defaultValue={pick(
-                    content,
-                    "home.featured.body",
-                    "Tim Kroncong Citran bukan cuma grup musik. Ini ruang di mana generasi bertemu, di mana lagu lama dijaga oleh tangan yang masih mau belajar. Kami sedang meliput Pak Bamuskal—penggerak grup, suami Bu Rini, dan pengingat bahwa kampung ini punya suara.",
-                  )}
-                  as="p"
-                  multiline
-                  className="mt-8 text-paper-soft/70 leading-relaxed max-w-lg"
-                />
-
-                <div className="mt-10 flex flex-wrap gap-4">
-                  <Link
-                    href="/liputan/tim-kroncong-citran"
-                    className="group inline-flex items-center gap-3 bg-kunyit-500 text-sogan-900 px-6 py-3 rounded-md hover:bg-kunyit-400 transition-colors text-sm font-medium"
-                  >
-                    Baca liputan
-                    <ArrowUpRight
-                      size={16}
-                      className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                    />
-                  </Link>
-                  <Link
-                    href="/liputan"
-                    className="inline-flex items-center gap-2 border border-paper-soft/20 hover:border-paper-soft/40 text-paper-soft px-6 py-3 rounded-md transition-colors text-sm"
-                  >
-                    Semua liputan
-                  </Link>
-                </div>
-              </div>
-            </Reveal>
-          </div>
+          <FeaturedCarousel
+            articles={articles}
+            sectionEyebrow={pick(content, "home.featured.eyebrow", "Cerita Pilihan")}
+          />
         </div>
       </section>
 
