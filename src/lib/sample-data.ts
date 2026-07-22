@@ -96,6 +96,10 @@ Begitu bagian atas tebing selesai dirapikan, giliran bagian bawah dibersihkan. S
 
 ![Ibu-ibu ikut menyapu jalan yang tertutup daun dan ranting kering.](/liputan/kerja-bakti-tebing/03-sapu-jalan.jpg)
 
+Ini bukan kerja bapak-bapak saja. Ibu-ibu turun tangan menyapu jalan pinggir tebing sambil diselimuti asap dari pembakaran ranting tak jauh dari lokasi—sapu lidi dan pengki jadi senjata utama membersihkan dedaunan yang berjatuhan dari tebing.
+
+![Ibu-ibu berkerudung menyapu jalan pinggir tebing yang berdebu dan berasap akibat pembakaran ranting di dekatnya.](/liputan/kerja-bakti-tebing/10-ibu-ibu-sapu.jpg)
+
 Ranting dan sampah organik yang terkumpul langsung dibakar di titik yang aman, jauh dari rumah warga—cara paling praktis untuk daerah yang belum terjangkau layanan pengangkutan sampah rutin.
 
 ![Pembakaran ranting dan sisa semak hasil bersih-bersih tebing.](/liputan/kerja-bakti-tebing/04-bakar-ranting.jpg)
