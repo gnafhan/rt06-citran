@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -33,6 +34,7 @@ interface Dokumen {
   eyebrow: string;
   judulHtml: React.ReactNode;
   pengantar: string;
+  poster: string;
   pasal: Pasal[];
   imbauanEyebrow: string;
   imbauanBody: string;
@@ -53,6 +55,7 @@ const DOKUMEN: Dokumen[] = [
     ),
     pengantar:
       "Bersama kita ciptakan lingkungan yang aman, nyaman, tertib, dan harmonis sesuai nilai-nilai luhur masyarakat. Peraturan ini ditetapkan berdasarkan hasil musyawarah warga RT 06 Citran dan menjadi pedoman bersama—bukan alat untuk menghakimi, melainkan acuan untuk menjaga kerukunan.",
+    poster: "/peraturan/peraturan-kesusilaan.jpg",
     pasal: [
       {
         nomor: 1,
@@ -151,6 +154,7 @@ const DOKUMEN: Dokumen[] = [
     ),
     pengantar:
       "Peraturan ini dibuat untuk menjaga keamanan, kenyamanan, dan ketertiban lingkungan RT 06 Citran Bodon Jagalan—ditetapkan berdasarkan hasil musyawarah warga.",
+    poster: "/peraturan/peraturan-pengamen.jpg",
     pasal: [
       {
         nomor: 1,
@@ -294,6 +298,23 @@ export function PeraturanTabs() {
             </h2>
             <p className="mt-6 max-w-2xl text-ink-soft leading-relaxed">
               {dokumen.pengantar}
+            </p>
+          </div>
+
+          {/* Poster asli */}
+          <div className="py-4">
+            <div className="relative mx-auto max-w-md overflow-hidden rounded-lg border border-sogan/15 shadow-sm">
+              <Image
+                src={dokumen.poster}
+                alt={`Poster ${dokumen.eyebrow}`}
+                width={853}
+                height={1280}
+                className="h-auto w-full"
+                sizes="(max-width: 768px) 100vw, 448px"
+              />
+            </div>
+            <p className="mt-3 text-center text-xs text-ink-mute eyebrow">
+              Poster resmi — isi lengkap tertulis di bawah
             </p>
           </div>
 
