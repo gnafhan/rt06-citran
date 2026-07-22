@@ -146,11 +146,13 @@ Papan peringatan sudah dipasang lama. Sudah ditulis jelas "Dilarang Buang..."—
 
 ## Solusinya: Kamera Pemantau
 
-Setelah berdiskusi, pengurus dan beberapa warga sepakat langkah paling realistis adalah memasang CCTV di titik rawan tersebut. Bukan untuk menghukum, tapi untuk efek jera dan bukti kalau memang diperlukan tindakan lebih lanjut.
+Setelah berdiskusi, pengurus sepakat langkah paling realistis adalah memasang CCTV di titik rawan tersebut. Bukan untuk menghukum, tapi untuk efek jera dan bukti kalau memang diperlukan tindakan lebih lanjut. Pemasangannya dibantu oleh tim mahasiswa KKN Universitas Gadjah Mada yang sedang bertugas di wilayah Citran—kebetulan momennya pas dengan kebutuhan warga akan pengawasan tambahan di titik rawan ini.
 
 ![Tim memasang kamera CCTV di tiang dekat rumpun pisang, tepat di jalur yang sering jadi lokasi pembuangan sampah sembarangan.](/liputan/cctv-tebing/01-pasang-cctv.jpg)
 
 Kamera dipasang di tiang yang sudah ada di lokasi, mengarah langsung ke titik jalan yang paling sering jadi sasaran buang sampah. Posisinya dipilih supaya jangkauannya mencakup jalur masuk-keluar, bukan cuma satu sudut sempit.
+
+![Tim mahasiswa KKN UGM berfoto bersama warga usai instalasi CCTV selesai—kamera sudah terpasang di tiang, tepat di antara rumpun pisang.](/liputan/cctv-tebing/02-tim-kkn-cctv.jpg)
 
 ## Bagian dari Rangkaian yang Sama
 
