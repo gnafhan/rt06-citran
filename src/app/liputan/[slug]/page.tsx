@@ -102,6 +102,31 @@ export default async function ArticlePage({ params }: Props) {
                     </h2>
                   );
                 }
+                // Sintaks gambar sederhana ala markdown: ![caption](url)
+                // Ditulis di textarea body admin, dirender jadi <figure> di sini.
+                const imgMatch = para.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+                if (imgMatch) {
+                  const [, caption, url] = imgMatch;
+                  return (
+                    <figure
+                      key={i}
+                      className="my-10 -mx-2 sm:mx-0 overflow-hidden rounded-lg border border-sogan/10"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={url}
+                        alt={caption || article.title}
+                        loading="lazy"
+                        className="w-full h-auto object-cover"
+                      />
+                      {caption && (
+                        <figcaption className="px-4 py-3 text-sm text-ink-mute font-mono leading-relaxed bg-paper-soft">
+                          {caption}
+                        </figcaption>
+                      )}
+                    </figure>
+                  );
+                }
                 return <p key={i}>{para}</p>;
               })}
             </div>

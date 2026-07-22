@@ -70,6 +70,102 @@ Grup ini terbentuk secara organik. Kumpul dulu, main lagu, baru dinamai belakang
     published_at: "2026-04-05T00:00:00.000Z",
     updated_at: "2026-04-05T00:00:00.000Z",
   },
+  {
+    id: "5",
+    slug: "kerja-bakti-jalan-tebing-paranet",
+    title: "Gotong Royong di Pinggir Tebing: Bersih-Bersih dan Pasang Paranet",
+    excerpt:
+      "Sabtu pagi, warga turun ke jalan pinggir tebing—membabat semak, membakar ranting, mengangkut pasir, sampai memasang paranet pengaman. Semua demi satu jalan yang lebih aman untuk dilewati.",
+    body: `Jalan kecil di pinggir tebing itu sudah lama jadi langganan komplain warga. Semak yang tumbuh liar, ranting yang menjorok ke jalan, tanah lereng yang longsor kecil-kecilan setiap musim hujan—dan yang paling menyebalkan, jadi tempat favorit orang buang sampah sembarangan karena gelap dan jarang dilewati.
+
+Sabtu pagi itu, RT 06 Citran turun tangan. Bukan cuma pengurus, tapi warga dari berbagai RT ikut gotong royong membersihkan jalur sepanjang tebing sampai ke bantaran sungai.
+
+## Naik Turun Tebing dengan Tangga Bambu
+
+Kerja bakti dimulai dari titik paling curam. Tangga bambu didirikan menempel ke lereng, dan satu-persatu warga bergantian naik untuk membersihkan tanaman liar yang akarnya mulai menggerus tanah. Ini bukan kerjaan ringan—posisi miring, tanah labil, dan matahari pagi yang mulai menyengat.
+
+![Warga bergantian naik tangga bambu untuk membersihkan tebing yang mulai ditumbuhi semak liar.](/liputan/kerja-bakti-tebing/01-tangga-tebing.jpg)
+
+Sambil menunggu giliran, warga lain menyiapkan konsumsi sederhana di gubuk kecil pinggir jalan—gorengan dan teh hangat, cukup untuk mengganjal perut sebelum lanjut kerja.
+
+## Babat Semak, Sapu Jalan
+
+Begitu bagian atas tebing selesai dirapikan, giliran bagian bawah dibersihkan. Semak dan ilalang yang selama ini menutupi bahu jalan dibabat habis, lalu disapu bersih dari aspal.
+
+![Membersihkan semak dan dedaunan liar di sepanjang lereng tebing sebelum dirapikan.](/liputan/kerja-bakti-tebing/02-bersih-lereng.jpg)
+
+![Ibu-ibu ikut menyapu jalan yang tertutup daun dan ranting kering.](/liputan/kerja-bakti-tebing/03-sapu-jalan.jpg)
+
+Ranting dan sampah organik yang terkumpul langsung dibakar di titik yang aman, jauh dari rumah warga—cara paling praktis untuk daerah yang belum terjangkau layanan pengangkutan sampah rutin.
+
+![Pembakaran ranting dan sisa semak hasil bersih-bersih tebing.](/liputan/kerja-bakti-tebing/04-bakar-ranting.jpg)
+
+![Membabat rumpun dan dahan yang menjorok ke jalur jalan.](/liputan/kerja-bakti-tebing/05-babat-semak.jpg)
+
+## Angkut Pasir untuk Perkuat Bantaran
+
+Di bagian bawah, dekat bendungan kecil sungai, tim lain sibuk mengangkut pasir dan material menggunakan gerobak dorong. Material ini dipakai untuk memperkuat titik-titik bantaran yang mulai terkikis air, sekaligus menimbun bagian jalan yang berlubang.
+
+![Warga bergotong royong mengangkut pasir memakai gerobak dorong dari bantaran sungai.](/liputan/kerja-bakti-tebing/06-angkut-pasir-1.jpg)
+
+Anak-anak pun ikut meramaikan lokasi, bermain di sekitar sungai sambil menyaksikan bapak-bapaknya bekerja—pemandangan yang bikin kerja bakti terasa lebih seperti acara kampung daripada sekadar proyek infrastruktur.
+
+![Proses pengangkutan material berlanjut, disaksikan anak-anak yang bermain di sekitar sungai.](/liputan/kerja-bakti-tebing/07-angkut-pasir-2.jpg)
+
+## Paranet: Jaring Pengaman Terakhir
+
+Bagian penutup kerja bakti ini yang paling penting: pemasangan paranet di lereng tebing yang paling rawan. Jaring hitam ini berfungsi menahan tanah dan material lepas agar tidak langsung jatuh ke jalan atau ke sungai, terutama saat hujan deras.
+
+![Dua warga memasang paranet di antara rumpun pisang untuk menahan longsoran kecil dari tebing.](/liputan/kerja-bakti-tebing/08-pasang-paranet-1.jpg)
+
+Paranet dibentangkan menutupi bagian lereng yang tanahnya paling gembur, diikat kuat ke tiang-tiang penyangga yang sudah ditancapkan sebelumnya. Persis di sebelah titik ini, papan peringatan "Dilarang Buang..." sudah lama berdiri—sayangnya belum cukup ampuh menghentikan kebiasaan buruk sebagian orang.
+
+![Pemasangan paranet hampir rampung, di sebelah papan peringatan larangan membuang sampah sembarangan.](/liputan/kerja-bakti-tebing/09-pasang-paranet-2.jpg)
+
+## Bukan Kerja Sekali Jadi
+
+Kerja bakti ini bukan yang pertama dan mungkin bukan yang terakhir. Tapi hasilnya langsung terasa: jalan yang lebih terang karena semak sudah rapi, tebing yang lebih aman karena ada paranet, dan bantaran sungai yang lebih kuat karena sudah ditimbun ulang.
+
+Ada satu masalah yang masih tersisa dan belum bisa diselesaikan lewat gotong royong biasa—kebiasaan sebagian orang buang sampah sembarangan di titik yang sama. Untuk itu, warga menyiapkan langkah lanjutan: pemasangan CCTV pemantau di titik rawan. Ceritanya ada di liputan berikutnya.`,
+    cover_url: "/liputan/kerja-bakti-tebing/01-tangga-tebing.jpg",
+    category: "kegiatan",
+    author: "Karang Taruna Citran",
+    published: true,
+    published_at: "2026-07-22T00:00:00.000Z",
+    updated_at: "2026-07-22T00:00:00.000Z",
+  },
+  {
+    id: "6",
+    slug: "pemasangan-cctv-jalan-tebing",
+    title: "Pasang CCTV di Jalan Tebing, Awasi yang Masih Buang Sampah Sembarangan",
+    excerpt:
+      "Setelah gotong royong bersihkan tebing dan pasang paranet, warga melangkah lebih jauh: memasang kamera pemantau di titik rawan buang sampah sembarangan.",
+    body: `Jalan pinggir tebing yang baru saja dibersihkan dan diperkuat dengan paranet ternyata masih punya satu musuh: kebiasaan sebagian orang buang sampah sembarangan di titik yang sama, seringnya di jam-jam sepi ketika tidak ada yang melihat.
+
+Papan peringatan sudah dipasang lama. Sudah ditulis jelas "Dilarang Buang..."—tapi seperti kebanyakan larangan tanpa pengawasan, efeknya terbatas. Sampah tetap muncul lagi beberapa hari kemudian, menumpuk di titik yang sama, persis di sisi tebing yang sudah susah-susah dirapikan warga.
+
+## Solusinya: Kamera Pemantau
+
+Setelah berdiskusi, pengurus dan beberapa warga sepakat langkah paling realistis adalah memasang CCTV di titik rawan tersebut. Bukan untuk menghukum, tapi untuk efek jera dan bukti kalau memang diperlukan tindakan lebih lanjut.
+
+![Tim memasang kamera CCTV di tiang dekat rumpun pisang, tepat di jalur yang sering jadi lokasi pembuangan sampah sembarangan.](/liputan/cctv-tebing/01-pasang-cctv.jpg)
+
+Kamera dipasang di tiang yang sudah ada di lokasi, mengarah langsung ke titik jalan yang paling sering jadi sasaran buang sampah. Posisinya dipilih supaya jangkauannya mencakup jalur masuk-keluar, bukan cuma satu sudut sempit.
+
+## Bagian dari Rangkaian yang Sama
+
+Pemasangan CCTV ini bukan proyek berdiri sendiri—ini kelanjutan langsung dari kerja bakti bersih-bersih tebing dan pemasangan paranet yang dilakukan beberapa waktu sebelumnya. Setelah tebing dirapikan dan diperkuat, langkah menjaga kebersihannya jadi prioritas berikutnya.
+
+Warga berharap dengan adanya pemantauan ini, jalan yang sudah bersih dan aman bisa tetap terjaga—dan pelan-pelan mengubah kebiasaan buruk sebagian orang yang selama ini menganggap tebing sepi sebagai tempat buang sampah gratis.
+
+Kalau ke depan ditemukan pelanggaran berulang lewat rekaman kamera, pengurus RT akan menindaklanjuti sesuai dengan Peraturan RT yang berlaku—mulai dari teguran, sampai koordinasi dengan pihak kelurahan bila diperlukan.`,
+    cover_url: "/liputan/cctv-tebing/01-pasang-cctv.jpg",
+    category: "kegiatan",
+    author: "Karang Taruna Citran",
+    published: true,
+    published_at: "2026-07-23T00:00:00.000Z",
+    updated_at: "2026-07-23T00:00:00.000Z",
+  },
 ];
 
 export const SAMPLE_PENGURUS: Pengurus[] = [
