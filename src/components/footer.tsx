@@ -27,6 +27,7 @@ const DEFAULTS = {
   "nav.tentang": "Tentang Citran",
   "nav.liputan": "Liputan & Cerita",
   "nav.pengurus": "Pengurus RT",
+  "nav.peraturan": "Peraturan RT",
 };
 
 function pick(map: Record<string, string>, key: keyof typeof DEFAULTS) {
@@ -115,6 +116,15 @@ export function Footer({ content }: Props) {
                   <Editable
                     contentKey="nav.pengurus"
                     defaultValue={pick(content, "nav.pengurus")}
+                    as="span"
+                  />
+                </Link>
+              </li>
+              <li>
+                <Link href="/peraturan" className="hover:text-kunyit-400 transition">
+                  <Editable
+                    contentKey="nav.peraturan"
+                    defaultValue={pick(content, "nav.peraturan")}
                     as="span"
                   />
                 </Link>

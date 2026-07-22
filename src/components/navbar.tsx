@@ -20,6 +20,7 @@ const DEFAULTS = {
   "nav.tentang": "Tentang",
   "nav.liputan": "Liputan",
   "nav.pengurus": "Pengurus",
+  "nav.peraturan": "Peraturan",
   "nav.cta": "Kontak",
 };
 
@@ -28,6 +29,7 @@ const NAV_ITEMS = [
   { href: "/tentang", key: "nav.tentang" as const },
   { href: "/liputan", key: "nav.liputan" as const },
   { href: "/pengurus", key: "nav.pengurus" as const },
+  { href: "/peraturan", key: "nav.peraturan" as const },
 ];
 
 function pick(map: Record<string, string>, key: keyof typeof DEFAULTS) {
