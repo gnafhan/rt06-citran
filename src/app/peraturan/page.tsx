@@ -1,24 +1,23 @@
 import type { Metadata } from "next";
 import {
   Target,
-  Ban,
   Users2,
-  MessageCircle,
-  AlertTriangle,
-  Scale,
-  ShieldCheck,
-  Handshake,
-  HeartHandshake,
+  Ban,
   Home,
-  Users,
+  ShieldCheck,
+  AlertTriangle,
+  ShieldOff,
+  HeartHandshake,
+  ShieldCheck as ShieldIcon,
+  Handshake,
 } from "lucide-react";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/reveal";
 import { KawungDivider, KawungPattern } from "@/components/kawung";
 
 export const metadata: Metadata = {
-  title: "Peraturan Kampung / RT",
+  title: "Peraturan RT",
   description:
-    "Peraturan Kampung / RT 06 Citran tentang ketertiban, norma kesusilaan, dan kehidupan bermasyarakat.",
+    "Peraturan RT 06 Citran Bodon Jagalan tentang ketertiban pengamen, pengemis, dan aktivitas meminta sumbangan di lingkungan RT.",
 };
 
 interface Pasal {
@@ -26,7 +25,7 @@ interface Pasal {
   judul: string;
   icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>;
   intro?: string;
-  poin: { text: string; sub?: string[] }[];
+  poin: string[];
 }
 
 const PASAL: Pasal[] = [
@@ -35,115 +34,80 @@ const PASAL: Pasal[] = [
     judul: "Tujuan",
     icon: Target,
     poin: [
-      { text: "Menjaga ketertiban, keamanan, dan kenyamanan lingkungan." },
-      { text: "Menjaga norma kesusilaan dan etika hidup bermasyarakat." },
-      {
-        text: "Mencegah terjadinya konflik yang dapat mengganggu kerukunan warga.",
-      },
+      "Menjaga keamanan, kenyamanan, dan ketertiban lingkungan RT.",
+      "Mencegah gangguan terhadap aktivitas dan privasi warga.",
+      "Mengatur keluar masuk orang yang melakukan aktivitas meminta sumbangan, pengamen, atau pengemis di lingkungan RT.",
     ],
   },
   {
     nomor: 2,
-    judul: "Larangan",
-    icon: Ban,
-    intro: "Setiap warga dan tamu dilarang:",
+    judul: "Ruang Lingkup",
+    icon: Users2,
+    intro: "Peraturan ini berlaku bagi:",
     poin: [
-      {
-        text: "Melakukan perbuatan yang melanggar norma kesusilaan dan ketertiban umum di lingkungan kampung.",
-      },
-      {
-        text: "Membawa atau menerima tamu lawan jenis yang bukan pasangan suami istri atau bukan anggota keluarga inti untuk menginap atau berada di dalam rumah dalam kondisi yang menimbulkan dugaan pelanggaran norma kesusilaan, sehingga mengganggu ketenteraman warga.",
-      },
-      {
-        text: "Menggunakan rumah sebagai tempat melakukan perbuatan yang bertentangan dengan norma hukum maupun norma masyarakat.",
-      },
+      "Pengamen.",
+      "Pengemis.",
+      "Pengumpul sumbangan dari luar lingkungan RT.",
+      "Penjual keliling atau pihak lain yang melakukan aktivitas dari rumah ke rumah yang berpotensi mengganggu ketertiban.",
     ],
   },
   {
     nomor: 3,
-    judul: "Tamu Lawan Jenis",
-    icon: Users2,
+    judul: "Ketentuan Pengamen dan Pengemis",
+    icon: Ban,
     poin: [
-      {
-        text: "Tamu lawan jenis diperbolehkan berkunjung untuk kepentingan yang wajar, seperti urusan keluarga, pekerjaan, pendidikan, atau sosial.",
-      },
-      {
-        text: "Kunjungan hendaknya dilakukan secara terbuka dan tetap menghormati norma yang berlaku di lingkungan.",
-      },
-      {
-        text: "Apabila tamu menginap, pemilik rumah wajib melaporkan kepada Ketua RT sesuai ketentuan administrasi tamu yang berlaku.",
-      },
+      "Pengamen dan pengemis tidak diperkenankan berkeliling dari rumah ke rumah di lingkungan RT 06 Citran tanpa izin dari pengurus RT.",
+      "Dilarang memaksa warga untuk memberikan uang, makanan, atau bentuk bantuan lainnya.",
+      "Dilarang memasuki halaman atau teras rumah tanpa izin pemilik rumah.",
+      "Dilarang mengganggu kenyamanan warga dengan menggunakan pengeras suara, alat musik, atau tindakan lain yang menimbulkan kebisingan berlebihan.",
+      "Pengamen dan pengemis wajib meninggalkan lingkungan RT apabila telah diingatkan oleh pengurus atau petugas keamanan lingkungan.",
     ],
   },
   {
     nomor: 4,
-    judul: "Penanganan Dugaan Pelanggaran",
-    icon: MessageCircle,
+    judul: "Peran Warga",
+    icon: Home,
     poin: [
-      {
-        text: "Apabila terdapat dugaan pelanggaran, warga diimbau untuk tidak melakukan tindakan main hakim sendiri, persekusi, atau menyebarkan informasi yang belum terbukti.",
-      },
-      {
-        text: "Laporan disampaikan kepada Ketua RT atau pengurus lingkungan untuk dilakukan klarifikasi secara bijaksana dan menjaga kerahasiaan pihak-pihak yang terlibat.",
-      },
-      {
-        text: "Pengurus RT dapat mengundang pihak terkait untuk melakukan musyawarah dan pembinaan.",
-      },
+      "Warga diimbau memberikan bantuan kepada pihak yang membutuhkan melalui lembaga sosial, rumah ibadah, atau program bantuan resmi.",
+      "Apabila warga ingin memberikan bantuan secara pribadi, hal tersebut merupakan hak masing-masing dan tidak menjadi kewajiban.",
+      "Warga yang mengetahui adanya aktivitas yang mengganggu ketertiban agar melaporkannya kepada Ketua RT atau petugas ronda.",
     ],
   },
   {
     nomor: 5,
-    judul: "Sanksi Sosial dan Administratif",
-    icon: AlertTriangle,
-    intro:
-      "Apabila setelah dilakukan klarifikasi dan musyawarah terbukti terjadi pelanggaran terhadap peraturan lingkungan, maka dapat dikenakan sanksi secara bertahap:",
+    judul: "Peran Pengurus RT",
+    icon: ShieldCheck,
     poin: [
-      { text: "Teguran lisan." },
-      { text: "Teguran tertulis." },
-      {
-        text: "Pernyataan permohonan maaf kepada pengurus dan/atau warga apabila pelanggaran menimbulkan keresahan.",
-      },
-      {
-        text: "Kewajiban mengikuti kegiatan sosial atau kerja bakti sebagai bentuk pembinaan.",
-      },
-      {
-        text: "Apabila pelanggaran berulang, pengurus RT dapat melaporkan kepada Pemerintah Desa/Kelurahan atau pihak berwenang sesuai ketentuan hukum yang berlaku.",
-      },
+      "Pengurus RT berhak memberikan teguran secara santun kepada pengamen atau pengemis yang melanggar ketentuan.",
+      "Apabila pengamen atau pengemis tidak mengindahkan teguran, pengurus RT dapat berkoordinasi dengan Pemerintah Kelurahan, Satpol PP, atau aparat keamanan sesuai kewenangannya.",
+      "Setiap tindakan dilakukan secara humanis, tanpa kekerasan, penghinaan, maupun perampasan barang milik yang bersangkutan.",
     ],
   },
   {
     nomor: 6,
-    judul: "Ketentuan Penting",
-    icon: Scale,
+    judul: "Larangan bagi Warga",
+    icon: ShieldOff,
     poin: [
-      {
-        text: "Pengurus RT tidak berwenang menetapkan seseorang telah melakukan perselingkuhan hanya berdasarkan dugaan atau gosip.",
-      },
-      {
-        text: "Penanganan difokuskan pada perilaku yang mengganggu ketertiban lingkungan atau melanggar aturan pribadi seseorang tanpa dasar yang jelas.",
-      },
-      {
-        text: "Apabila ditemukan dugaan tindak pidana atau pelanggaran hukum, penyelesaiannya diserahkan kepada aparat yang berwenang.",
-      },
+      "Dilarang melakukan tindakan main hakim sendiri terhadap pengamen atau pengemis.",
+      "Dilarang melakukan kekerasan fisik maupun verbal.",
+      "Dilarang menyebarkan informasi yang bersifat menghina atau mempermalukan seseorang melalui media sosial.",
     ],
   },
   {
     nomor: 7,
     judul: "Penutup",
-    icon: ShieldCheck,
+    icon: AlertTriangle,
     poin: [
-      {
-        text: "Peraturan ini berlaku sejak tanggal ditetapkan berdasarkan hasil musyawarah warga dan menjadi pedoman bagi seluruh warga Kampung/RT dalam menjaga ketertiban, keamanan, dan keharmonisan lingkungan.",
-      },
+      "Peraturan ini berlaku sejak tanggal ditetapkan berdasarkan hasil musyawarah warga RT 06 Citran Bodon Jagalan dan menjadi pedoman bersama dalam menjaga keamanan, kenyamanan, serta ketertiban lingkungan.",
     ],
   },
 ];
 
 const PILAR = [
-  { icon: Handshake, label: "Saling Menghormati" },
-  { icon: HeartHandshake, label: "Jaga Toleransi" },
-  { icon: Home, label: "Patuhi Aturan Lingkungan" },
-  { icon: Users, label: "Utamakan Musyawarah" },
+  { icon: ShieldIcon, label: "Aman" },
+  { icon: Home, label: "Nyaman" },
+  { icon: Handshake, label: "Tertib" },
+  { icon: HeartHandshake, label: "Saling Menghargai" },
 ];
 
 export const revalidate = false;
@@ -159,21 +123,19 @@ export default function PeraturanPage() {
         />
         <div className="container-editorial relative">
           <Reveal>
-            <p className="eyebrow text-sogan-500">Peraturan Kampung / RT</p>
+            <p className="eyebrow text-sogan-500">Peraturan RT 06 Citran Bodon Jagalan</p>
           </Reveal>
           <Reveal delay={0.15}>
             <h1 className="mt-6 font-display text-5xl md:text-7xl text-sogan-900 leading-[1] max-w-4xl">
-              Ketertiban, norma kesusilaan, dan{" "}
-              <em className="italic text-sogan">kehidupan bermasyarakat</em>.
+              Ketertiban pengamen, pengemis, dan aktivitas{" "}
+              <em className="italic text-sogan">meminta sumbangan</em>.
             </h1>
           </Reveal>
           <Reveal delay={0.3}>
             <p className="mt-10 max-w-2xl text-lg text-ink-soft leading-relaxed">
-              Bersama kita ciptakan lingkungan yang aman, nyaman, tertib, dan
-              harmonis sesuai nilai-nilai luhur masyarakat. Peraturan ini
-              ditetapkan berdasarkan hasil musyawarah warga RT 06 Citran dan
-              menjadi pedoman bersama—bukan alat untuk menghakimi, melainkan
-              acuan untuk menjaga kerukunan.
+              Peraturan ini dibuat untuk menjaga keamanan, kenyamanan, dan
+              ketertiban lingkungan RT 06 Citran Bodon Jagalan—ditetapkan
+              berdasarkan hasil musyawarah warga.
             </p>
           </Reveal>
         </div>
@@ -210,12 +172,12 @@ export default function PeraturanPage() {
                         </p>
                       )}
                       <ol className="mt-4 space-y-3 text-ink-soft leading-relaxed">
-                        {pasal.poin.map((item, i) => (
+                        {pasal.poin.map((text, i) => (
                           <li key={i} className="flex gap-3">
                             <span className="font-mono text-xs text-kunyit-600 mt-1 shrink-0">
                               {i + 1}.
                             </span>
-                            <span>{item.text}</span>
+                            <span>{text}</span>
                           </li>
                         ))}
                       </ol>
@@ -230,16 +192,17 @@ export default function PeraturanPage() {
 
       <KawungDivider />
 
-      {/* Mari kita jaga kampung kita */}
+      {/* Imbauan */}
       <section className="py-24 md:py-32 bg-paper-soft border-y border-sogan/10">
         <div className="container-editorial">
           <Reveal>
             <p className="eyebrow text-sogan-500 text-center">
-              Mari Kita Jaga Kampung Kita
+              Imbauan kepada Semua Warga
             </p>
             <p className="mt-4 max-w-xl mx-auto text-center text-ink-soft leading-relaxed">
-              Dengan saling menghormati, menjaga norma, dan mengedepankan
-              musyawarah untuk mewujudkan lingkungan yang rukun dan damai.
+              Mari kita ciptakan lingkungan yang aman, tertib, dan nyaman.
+              Peduli kepada sesama dapat dilakukan melalui cara yang
+              bijaksana, tanpa mengganggu ketertiban lingkungan.
             </p>
           </Reveal>
 
@@ -264,7 +227,7 @@ export default function PeraturanPage() {
               Hormat kami,
               <br />
               <span className="font-display text-lg text-sogan-900">
-                Pengurus RT 06 Citran
+                Pengurus RT 06 Citran Bodon Jagalan
               </span>
             </p>
           </Reveal>
